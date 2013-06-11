@@ -1,0 +1,278 @@
+body {
+    background: #f5f5f1;
+}
+
+.selected {
+    background: #CCE9F0;
+}
+
+.selected > a > .name {
+    color: black;
+}
+.selected .count {
+    color: black;
+}
+.selected .oculus {
+    color: black;
+}
+
+.sub {
+    width: 100%;
+    padding: 3px 0px;
+    color: gray;
+}
+
+.oculus {
+    margin-left: -20px;
+}
+
+.container {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.name {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-right: 20px;
+    max-width: 66%;
+    padding-left: 5px;
+}
+.count {
+    margin-top: 1px;
+    float: right;
+    padding-right: 5px;
+}
+
+.badge {
+    background: #67BED3;
+}
+
+.container {
+    width: 1400px;
+}
+
+a {
+    color: gray;
+}
+
+a:hover {
+    color: gray;
+    text-decoration: none;
+}
+
+.oculus:hover {
+    color: #728BC0;
+}
+
+#navbar {
+    height: 35px;
+    background: #1C1C1C;
+}
+
+#logo {
+    font-weight: bold;
+    font-size: 25px;
+    color: #F9F9F9;
+    position: relative;
+    top: 6px;
+}
+
+#wat {
+    position: relative;
+    top: 4px;
+    left: 5px;
+}
+
+#wat:hover {
+    color: white;
+}
+
+#title_container{
+    padding-top: 25px;
+    padding-bottom: 20px;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: left;
+}
+
+#graph_title {
+    float: left;
+    display: inline-block;
+    max-width: 85%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 24px;
+}
+
+#graph_link {
+    padding-top: 3px;
+    font-size: 16px;
+    display: inline-block;
+    margin: 0 auto;
+    text-align: center;
+    padding-left: 10px;
+    float: left;
+    display: inline-block;
+}
+
+#deviance {
+    float: right;
+    display: inline-block;
+}
+
+#legend {
+    font-weight: bold;
+    font-size: 15px;
+    text-align: left;
+    padding-bottom: 25px;
+    margin: 0 5px 0 5px;
+}
+
+#legend_name {
+    display: inline-block;
+    float: left;
+}
+
+#legend_coefficient {
+    display: inline-block;
+    float: right;
+}
+
+.metric_container {
+    display: inline-block;
+    position: relative;
+    float: left;
+    padding-bottom: 30px;
+}
+
+#m8, #m9 {
+    margin-right: 0;
+}
+
+#graph_container {
+    height: 280px;
+    width: 100%;
+    margin-bottom: 90px;
+    margin-top: 15px;
+    border-radius: 4px;
+}
+
+#mini_graphite {
+    height: 200px;
+    width: 100%;
+}
+
+#graphite {
+    height: 140px;
+    width: 100%;
+}
+
+#metrics_listings {
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    background: #fff;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+#metrics_main {
+    padding: 0px;
+    margin: 0px;
+    height: 400px;
+    padding-bottom: 50px;
+}
+
+#m0 > .sub:first-child {
+    border-top-left-radius: 4px;
+}
+
+@media (max-width: 1450px) {
+    .sub {
+        font-size: 12px;
+    }
+
+    .count {
+        font-size: 12px;
+    }
+
+    .badge {
+        padding: 2px 5px;
+        font-size: 10px;
+        line-height 11px;
+    }
+
+    .container {
+        width: 1040px;
+    }
+
+    #metrics_main {
+        height: 390px;
+    }
+
+    #mini_graphite {
+        height: 145px;
+        width: 100%;
+    }
+
+    #graphite {
+        height: 100px;
+        width: 100%;
+    }
+
+    #graph_container {
+        height: 245px;
+    }
+}
+
+.dygraph-axis-label-y1 {
+    display: none;
+}
+
+#mini {
+    height: 340px;
+    width: 100%;
+    margin-bottom: 15px;
+    margin-top: 5px;
+    padding-bottom: 7px;
+    padding-right: 5px;
+    border-radius: 4px;
+    background: white;
+    border: 1px solid #DDD;
+}
+
+#graph {
+    height: 160px;
+    width: 100%;
+    margin-bottom: 15px;
+    margin-top: 5px;
+    padding-bottom: 7px;
+    padding-right: 5px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #DDD;
+}
+
+.duration {
+    font-size: 12px;
+    padding-left: 5px;
+}
+
+#mini_label, #big_label {
+    display: inline;
+    font-size: 12px;
+    float: right;
+    margin-top: -20px;
+}
+
+//#mini > div > div {
+//    width: 15px;
+//    text-overflow: ellipsis;
+//}
+//
+//#graph > div > div {
+//    width: 15px;
+//    text-overflow: ellipsis;
+//}

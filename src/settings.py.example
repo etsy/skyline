@@ -1,0 +1,147 @@
+"""
+Shared settings
+"""
+
+# The path for the Redis unix socket
+REDIS_SOCKET_PATH='/tmp/redis.sock'
+
+# The Skyline logs directory. Do not include a trailing slash.
+LOG_PATH = '/var/log/skyline'
+
+# The Skyline pids directory. Do not include a trailing slash.
+PID_PATH = '/var/run/skyline'
+
+# Metrics will be prefixed with this value in Redis.
+FULL_NAMESPACE = 'metrics.'
+
+# The Horizon agent will make T'd writes to both the full namespace and the 
+# mini namespace. Oculus gets its data from everything in the mini namespace.
+MINI_NAMESPACE = 'mini.'
+
+# This is the rolling duration that will be stored in Redis. Be sure to pick a
+# value that suits your memory capacity, your CPU capacity, and your overall
+# metrics count. Longer durations take a longer to analyze, but they can
+# help the algorithms reduce the noise and provide more accurate anomaly
+# detection.
+FULL_DURATION = 86400
+
+# This is the duration of the 'mini' namespace, if you are also using the 
+# Oculus service. It is also the duration of data that is displayed in the 
+# web app 'mini' view.
+MINI_DURATION = 3600
+
+# If you have a Graphite host set up, set this metric to get graphs on
+# Skyline and Horizon. Include http://.
+GRAPHITE_HOST = 'http://your_graphite_host.com'
+
+# If you have Oculus set up, set this metric to set the clickthrough
+# on the webapp. Include http://.
+OCULUS_HOST = 'http://your_oculus_host.com'
+
+""" 
+Analyzer settings 
+"""
+
+# This is the location the Skyline agent will write the anomalies file to disk. 
+# It needs to be in a location accessible to the webapp.
+ANOMALY_DUMP = 'webapp/static/dump/anomalies.json'
+
+# This is the number of processes that the Skyline analyzer will spawn.
+# Analysis is a very CPU-intensive procedure. You will see optimal results
+# if you set ANALYZER_PROCESSES to several less than the total number of
+# CPUs on your box. Be sure to leave some CPU room for the Horizon workers, 
+# and for Redis.
+ANALYZER_PROCESSES = 5
+
+# This is the duration, in seconds, for a metric to become 'stale' and for 
+# the analyzer to ignore it until new datapoints are added. 'Staleness' means
+# that a datapoint has not been added for STALE_PERIOD seconds.
+STALE_PERIOD = 500
+
+# This is the minimum length of a timeseries, in datapoints, for the analyzer
+# to recognize it as a complete series.
+MIN_TOLERABLE_LENGTH = 1
+
+# Sometimes a metric will continually transmit 0. There's no need to analyze
+# metrics that remain boring like this, so this setting determines the amount
+# of boring datapoints that will be allowed to accumulate before the analyzer
+# skips over the metric. If the metric becomes noisy again, the analyzer will
+# stop ignoring it.
+MAX_TOLERABLE_BOREDOM = 100
+
+# The canary metric should be a metric with a very high, reliable resolution
+# that you can use to gauge the status of the system as a whole.
+CANARY_METRIC = 'statsd.numStats'
+
+# These are the algorithms that the Analyzer will run. To add a new algorithm,
+# you must both define the algorithm in algorithms.py and add its name here.
+ALGORITHMS = [
+                'first_hour_average',
+                'mean_subtraction_cumulation',
+                'simple_stddev_from_moving_average',
+                'stddev_from_moving_average',
+                'least_squares',
+                'grubbs',
+                'histogram_bins',
+             ]
+
+# This is the number of algorithms that must return True before a metric is
+# classified as anomalous.
+CONSENSUS = 5
+
+"""
+Horizon settings
+"""
+# This is the number of worker processes that will consume from the Horizon
+# queue.
+WORKER_PROCESSES = 2
+
+# This is the port that listens for Graphite pickles over TCP, sent by Graphite's
+# carbon-relay agent.
+PICKLE_PORT = 2024
+
+# This is the port that listens for Messagepack-encoded UDP packets.
+UDP_PORT = 2025
+
+# This is how big a 'chunk' of metrics will be before they are added onto
+# the shared queue for processing into Redis. If you are noticing that Horizon
+# is having trouble consuming metrics, try setting this value a little higher.
+CHUNK_SIZE = 10
+
+# This is the maximum allowable length of the processing queue before new
+# chunks are prevented from being added. If you consistently fill up the 
+# processing queue, a higher MAX_QUEUE_SIZE will not save you. It most likely 
+# means that the workers do not have enough CPU alotted in order to process the 
+# queue on time. Try increasing CHUNK_SIZE, decreasing ANALYZER_PROCESSES, or 
+# decreasing ROOMBA_PROCESSES.
+MAX_QUEUE_SIZE = 500
+
+# This is the number of Roomba processes that will be spawned to trim
+# timeseries in order to keep them at FULL_DURATION. Keep this number small, 
+# as it is not important that metrics be exactly FULL_DURATION *all* the time.
+ROOMBA_PROCESSES = 1
+
+# The Horizon agent will ignore incoming datapoints if their timestamp
+# is older than MAX_RESOLUTION seconds ago.
+MAX_RESOLUTION = 10
+
+# These are metrics that, for whatever reason, you do not want to store 
+# in Skyline. The Listener will check to see if each incoming metrics
+# contains anything in the skip list. It is generally wise to skip entire
+# namespaces by adding a '.' at the end of the skipped item - otherwise 
+# you might skip things you don't intend to.
+SKIP_LIST = ['example.statsd.metric',
+             'another.example.metric',
+            ]
+
+
+"""
+Webapp settings
+"""
+
+# The IP address for the webapp
+WEBAPP_IP = '127.0.0.1'
+
+# The port for the webapp
+WEBAPP_PORT = 1500
+

@@ -1,0 +1,5 @@
+*.pyc
+*.swp
+*.log
+dump.rdb
+nohup.out
