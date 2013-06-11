@@ -48,7 +48,7 @@ sudo mkdir /var/log/redis
 * `cd skyline/bin`
 * `sudo redis-server redis.conf`
 * `sudo ./horizon.d start`
-* `sudo ./skyline.d start`
+* `sudo ./analyzer.d start`
 * `sudo ./webapp.d start`
 
 By default, the webapp is served on port 1500.
