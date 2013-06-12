@@ -56,7 +56,7 @@ class App():
         self.stdin_path = '/dev/null'
         self.stdout_path = settings.LOG_PATH + '/webapp.log'
         self.stderr_path = settings.LOG_PATH + '/webapp.log'
-        self.pidfile_path =  settings.LOG_PATH + '/pids/webapp.pid'
+        self.pidfile_path =  settings.PID_PATH + '/webapp.pid'
         self.pidfile_timeout = 5
 
     def run(self):
