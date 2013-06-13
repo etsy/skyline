@@ -1,11 +1,8 @@
 import redis
 import msgpack
 import sys
-import json
-import socket
 import time
 from os.path import dirname, abspath
-from multiprocessing import Process, Manager, log_to_stderr
 
 # add the shared settings file to namespace
 sys.path.insert(0, ''.join((dirname(dirname(abspath(__file__))), "/src" )))
@@ -20,13 +17,13 @@ def check_continuity(metric, mini = False):
     else:
         raw_series = r.get(settings.FULL_NAMESPACE + metric)
 
-    if raw_series == None:
+    if raw_series is None:
         print 'key not found at %s ' + metric
         return 0, 0, 0, 0, 0
 
     unpacker = msgpack.Unpacker()
     unpacker.feed(raw_series)
-    timeseries = [ unpacked for unpacked in unpacker ]
+    timeseries = list(unpacker)
     length = len(timeseries)
 
     start = time.ctime(int(timeseries[0][0]))
@@ -37,15 +34,14 @@ def check_continuity(metric, mini = False):
     total = 0
     bad = 0
     missing = 0
-    for i, tuple in enumerate(timeseries):
+    for item in timeseries:
         total += 1
-        if int(tuple[0]) - last != 10:
+        if int(item[0]) - last != 10:
             bad += 1
-            missing += int(tuple[0]) - last
-        last = tuple[0]
+            missing += int(item[0]) - last
+        last = item[0]
    
-    timeseries.reverse()
-    total_sum = sum([tuple[1] for i, tuple in enumerate(timeseries) if i < 50])
+    total_sum = sum(item[1] for item in timeseries[-50:])   
 
     return length, total_sum, start, end, duration, bad, missing
 
