@@ -41,8 +41,7 @@ def data():
         else:
             unpacker = Unpacker(use_list = False)
             unpacker.feed(raw_series)
-            timeseries = [ unpacked for unpacked in unpacker ]
-            timeseries = [[tuple[0], tuple[1]] for tuple in timeseries]
+            timeseries = [item[:2] for item in unpacker]
             resp = json.dumps({'results': timeseries})
             return resp, 200
     except Exception as e:

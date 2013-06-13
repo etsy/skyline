@@ -175,7 +175,7 @@ def run_selected_algorithm(timeseries):
         raise Incomplete()
 
     # Get rid of boring series
-    total = sum(tuple[1] for tuple in timeseries[-MAX_TOLERABLE_BOREDOM:])
+    total = sum(item[1] for item in timeseries[-MAX_TOLERABLE_BOREDOM:])
     if total == 0:
         raise Boring()
 
