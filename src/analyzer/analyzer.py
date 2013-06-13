@@ -1,15 +1,14 @@
 import logging
 from redis import StrictRedis
-from time import time, ctime, sleep
+from time import time, sleep
 from threading import Thread
 from collections import defaultdict
-from multiprocessing import Process, Manager, log_to_stderr, Value, Lock
+from multiprocessing import Process, Manager, Lock
 from msgpack import Unpacker
-from os import path, pardir, kill, getpid, system
+from os import path, kill, getpid, system
 from math import ceil
 import traceback
 import operator
-import sys
 import settings
 
 from algorithms import run_selected_algorithm
@@ -25,7 +24,7 @@ class Analyzer(Thread):
         Thread.__init__(self)
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
         self.daemon = True
-        self.parent_pid = parent_pid 
+        self.parent_pid = parent_pid
         self.current_pid = getpid()
         self.lock = Lock()
         self.exceptions = Manager().dict()
