@@ -1,11 +1,8 @@
 import redis
 import msgpack
 import sys
-import json
-import socket
 import time
 from os.path import dirname, abspath
-from multiprocessing import Process, Manager, log_to_stderr
 
 # add the shared settings file to namespace
 sys.path.insert(0, ''.join((dirname(dirname(abspath(__file__))), "/src" )))
