@@ -47,7 +47,7 @@ def grubbs(timeseries):
     threshold_squared = threshold * threshold
     grubbs_score = ((len_series - 1) / np.sqrt(len_series)) * np.sqrt(threshold_squared / (len_series - 2 + threshold_squared))
 
-    return z_score > grubbs_score:
+    return z_score > grubbs_score
 
 def first_hour_average(timeseries):
     """
