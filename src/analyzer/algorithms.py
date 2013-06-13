@@ -46,9 +46,8 @@ def grubbs(timeseries):
     threshold = scipy.stats.t.isf(.05 / (2 * len_series) , len_series - 2)
     threshold_squared = threshold * threshold
     grubbs_score = ((len_series - 1) / np.sqrt(len_series)) * np.sqrt(threshold_squared / (len_series - 2 + threshold_squared))
-    if z_score > grubbs_score:
-        return True
-    return False
+
+    return z_score > grubbs_score:
 
 def first_hour_average(timeseries):
     """
@@ -103,9 +102,7 @@ def mean_subtraction_cumulation(timeseries):
     stdDev = series[0:len(series) - 1].std()
     expAverage = pandas.stats.moments.ewma(series, com=15)
 
-    if abs(series.iget(-1)) > 3 * stdDev:
-        return True
-    return False
+    return abs(series.iget(-1)) > 3 * stdDev
 
 def least_squares(timeseries):
     """
@@ -127,13 +124,11 @@ def least_squares(timeseries):
 
     if len(errors) < 3:
     	return False
-    
+
     std_dev = scipy.std(errors)
     t = (errors[-1] + errors[-2] + errors[-3]) / 3
-    if abs(t) > std_dev * 3 and round(std_dev) != 0 and round(t) != 0:
-        return True
-    return False
 
+    return abs(t) > std_dev * 3 and round(std_dev) != 0 and round(t) != 0
 
 def histogram_bins(timeseries):
     """
