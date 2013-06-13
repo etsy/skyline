@@ -20,7 +20,7 @@ logger = logging.getLogger("AnalyzerLog")
 class Analyzer(Thread):
     def __init__(self, parent_pid):
         """
-        Pass in the websocket handler to the manager
+        Initialize the Analyzer
         """
         Thread.__init__(self)
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
@@ -123,7 +123,7 @@ class Analyzer(Thread):
 
     def run(self):
         """
-        Start the manager
+        Called when the process intializes.
         """
         while 1:
             now = time()

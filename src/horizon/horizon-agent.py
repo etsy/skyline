@@ -52,7 +52,7 @@ class Horizon():
 
 if __name__ == "__main__":
     """
-    Start the manager and the server
+    Start the Horizon agent.
     """
     if not isdir(settings.PID_PATH):
         print 'pid directory does not exist at %s' % settings.PID_PATH

@@ -24,12 +24,19 @@ class Roomba(Thread):
         self.parent_pid = parent_pid
 
     def check_if_parent_is_alive(self):
+        """
+        Self explanatory.
+        """
         try:
             kill(self.parent_pid, 0)
         except:
             exit(0)
 
     def vacuum(self, i, namespace, duration):
+        """
+        Trim metrics that are older than settings.FULL_DURATION and
+        purge old metrics.
+        """
         begin = time()
 
         # Discover assigned metrics
@@ -136,6 +143,9 @@ class Roomba(Thread):
             sleep(10)
 
     def run(self):
+        """
+        Called when process initializes.
+        """
         logger.info('started roomba')
 
         while 1:

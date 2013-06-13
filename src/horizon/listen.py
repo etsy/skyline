@@ -108,7 +108,7 @@ class Listen(Process):
 
     def listen_udp(self):
         """
-        Listen over udp for strings
+        Listen over udp for MessagePack strings
         """
         while 1:
             try:
@@ -140,7 +140,7 @@ class Listen(Process):
 
     def run(self):
         """
-        Main method
+        Called when process intializes.
         """
         logger.info('started listener')
 

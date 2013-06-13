@@ -26,12 +26,18 @@ class Worker(Process):
         self.daemon = True
 
     def check_if_parent_is_alive(self):
+        """
+        Self explanatory.
+        """
         try:
             kill(self.parent_pid, 0)
         except:
             exit(0)
 
     def in_skip_list(self, metric_name):
+        """
+        Check if the metric is in SKIP_LIST.
+        """
         for to_skip in settings.SKIP_LIST:
             if to_skip in metric_name:
                 return True
@@ -39,6 +45,9 @@ class Worker(Process):
         return False
 
     def run(self):
+        """
+        Called when the process intializes.
+        """
         logger.info('started worker')
 
         FULL_NAMESPACE = settings.FULL_NAMESPACE

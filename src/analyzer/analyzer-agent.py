@@ -20,7 +20,6 @@ class AnalyzerAgent():
         self.pidfile_timeout = 5
 
     def run(self):
-
         logger.info('starting skyline analyzer')
         Analyzer(getpid()).start()
 
@@ -29,7 +28,7 @@ class AnalyzerAgent():
 
 if __name__ == "__main__":
     """
-    Start the Analyzer
+    Start the Analyzer agent.
     """
     if not isdir(settings.PID_PATH):
         print 'pid directory does not exist at %s' % settings.PID_PATH
