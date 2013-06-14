@@ -19,7 +19,7 @@ class Worker(Process):
     the latest datapoints to their respective timesteps in Redis.
     """
     def __init__(self, queue, parent_pid):
-        Process.__init__(self)
+        super(Worker, self).__init__()
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
         self.q = queue
         self.parent_pid = parent_pid

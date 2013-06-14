@@ -18,7 +18,7 @@ class Listen(Process):
     The listener is responsible for listening on a port.
     """
     def __init__(self, port, queue, parent_pid, type="pickle"):
-        Process.__init__(self)
+        super(Listen, self).__init__()
         self.port = port
         self.q = queue
         self.daemon = True

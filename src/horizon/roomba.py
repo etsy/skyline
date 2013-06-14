@@ -18,7 +18,7 @@ class Roomba(Thread):
     The Roomba is responsible for deleting keys older than DURATION.
     """
     def __init__(self, parent_pid):
-        Thread.__init__(self)
+        super(Roomba, self).__init__()
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
         self.daemon = True
         self.parent_pid = parent_pid
