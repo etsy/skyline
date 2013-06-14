@@ -5,7 +5,6 @@ from threading import Thread
 from msgpack import Unpacker, packb
 from types import TupleType
 from time import time, sleep
-from random import shuffle
 
 import logging
 import settings
