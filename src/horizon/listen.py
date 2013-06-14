@@ -1,11 +1,9 @@
 import socket
 from os import kill, getpid
-from redis import StrictRedis
-from threading import Thread
 from Queue import Full
 from multiprocessing import Process
 from struct import Struct, unpack
-from msgpack import Unpacker, packb, unpackb
+from msgpack import unpackb
 from cPickle import loads
 
 import logging
@@ -18,7 +16,7 @@ class Listen(Process):
     The listener is responsible for listening on a port.
     """
     def __init__(self, port, queue, parent_pid, type="pickle"):
-        Process.__init__(self)
+        super(Listen, self).__init__()
         self.port = port
         self.q = queue
         self.daemon = True
@@ -150,5 +148,3 @@ class Listen(Process):
             self.listen_udp()
         else:
             logging.error('unknown listener format')
-            return
-

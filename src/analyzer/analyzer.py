@@ -1,15 +1,14 @@
 import logging
 from redis import StrictRedis
-from time import time, ctime, sleep
+from time import time, sleep
 from threading import Thread
 from collections import defaultdict
-from multiprocessing import Process, Manager, log_to_stderr, Value, Lock
+from multiprocessing import Process, Manager, Lock
 from msgpack import Unpacker
-from os import path, pardir, kill, getpid, system
+from os import path, kill, getpid, system
 from math import ceil
 import traceback
 import operator
-import sys
 import settings
 
 from algorithms import run_selected_algorithm
@@ -22,10 +21,10 @@ class Analyzer(Thread):
         """
         Initialize the Analyzer
         """
-        Thread.__init__(self)
+        super(Analyzer, self).__init__()
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
         self.daemon = True
-        self.parent_pid = parent_pid 
+        self.parent_pid = parent_pid
         self.current_pid = getpid()
         self.lock = Lock()
         self.exceptions = Manager().dict()
@@ -77,7 +76,7 @@ class Analyzer(Thread):
                 raw_series = raw_assigned[i]
                 unpacker = Unpacker(use_list = False)
                 unpacker.feed(raw_series)
-                timeseries = [ unpacked for unpacked in unpacker ]
+                timeseries = list(unpacker)
 
                 anomalous, ensemble, datapoint = run_selected_algorithm(timeseries)
 
@@ -162,13 +161,11 @@ class Analyzer(Thread):
 
             # Write anomalous_metrics to static webapp directory
             filename = path.abspath(path.join(path.dirname( __file__ ), '..', settings.ANOMALY_DUMP))
-            fh = open(filename, 'w')
-
-            # Make it JSONP with a handle_data() function
-            anomalous_metrics = list(self.anomalous_metrics)
-            anomalous_metrics.sort(key=operator.itemgetter(1))
-            fh.write('handle_data(%s)' % anomalous_metrics)
-            fh.close()
+            with open(filename, 'w') as fh:
+                # Make it JSONP with a handle_data() function
+                anomalous_metrics = list(self.anomalous_metrics)
+                anomalous_metrics.sort(key=operator.itemgetter(1))
+                fh.write('handle_data(%s)' % anomalous_metrics)
 
             # Log progress
             logger.info('seconds to run    :: %.2f' % (time() - now))
@@ -182,13 +179,13 @@ class Analyzer(Thread):
             if settings.GRAPHITE_HOST != '':
                 host = settings.GRAPHITE_HOST.replace('http://', '')
                 system('echo skyline.analyzer.run_time %.2f %s | nc -w 3 %s 2003' % ((time() - now), now, host))
-            
+
             # Check canary metric
             raw_series = self.redis_conn.get(settings.CANARY_METRIC)
-            if raw_series != None:
+            if raw_series is not None:
                 unpacker = Unpacker(use_list = False)
                 unpacker.feed(raw_series)
-                timeseries = [ unpacked for unpacked in unpacker ]
+                timeseries = list(unpacker)
                 time_human = (timeseries[-1][0] - timeseries[0][0]) / 3600
                 projected = 24 * (time() - now) / time_human
 

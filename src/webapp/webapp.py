@@ -5,7 +5,6 @@ import sys
 from msgpack import Unpacker
 from flask import Flask, request, render_template
 from daemon import runner
-from os import getpid
 from os.path import dirname, abspath
 
 # add the shared settings file to namespace
@@ -23,13 +22,13 @@ def index():
 
 @app.route("/app_settings")
 def app_settings():
-    app_settings = {'GRAPHITE_HOST': settings.GRAPHITE_HOST, 
+    app_settings = {'GRAPHITE_HOST': settings.GRAPHITE_HOST,
                     'OCULUS_HOST': settings.OCULUS_HOST,
                     'MINI_NAMESPACE': settings.MINI_NAMESPACE,
                     'FULL_NAMESPACE': settings.FULL_NAMESPACE
                    }
     resp = json.dumps(app_settings)
-    return resp, 200 
+    return resp, 200
 
 @app.route("/api", methods=['GET'])
 def data():
@@ -42,8 +41,7 @@ def data():
         else:
             unpacker = Unpacker(use_list = False)
             unpacker.feed(raw_series)
-            timeseries = [ unpacked for unpacked in unpacker ]
-            timeseries = [[tuple[0], tuple[1]] for tuple in timeseries]
+            timeseries = [item[:2] for item in unpacker]
             resp = json.dumps({'results': timeseries})
             return resp, 200
     except Exception as e:
@@ -71,7 +69,7 @@ if __name__ == "__main__":
     """
     Start the server
     """
-    
+
     webapp = App()
 
     logger = logging.getLogger("AppLog")

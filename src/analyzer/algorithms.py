@@ -3,10 +3,7 @@ import numpy as np
 import scipy
 import statsmodels.api as sm
 from time import time
-from datetime import datetime
-from types import ListType
 import traceback
-import sys
 import logging
 
 from settings import *
@@ -17,7 +14,7 @@ logger = logging.getLogger("AnalyzerLog")
 """
 This is no man's land. Do anything you want in here,
 as long as you return a boolean that determines whether the input
-timeseries is anomalous or not. 
+timeseries is anomalous or not.
 
 To add an algorithm, define it here, and add its name to settings.ALGORITHMS.
 """
@@ -49,9 +46,8 @@ def grubbs(timeseries):
     threshold = scipy.stats.t.isf(.05 / (2 * len_series) , len_series - 2)
     threshold_squared = threshold * threshold
     grubbs_score = ((len_series - 1) / np.sqrt(len_series)) * np.sqrt(threshold_squared / (len_series - 2 + threshold_squared))
-    if z_score > grubbs_score:
-        return True
-    return False
+
+    return z_score > grubbs_score
 
 def first_hour_average(timeseries):
     """
@@ -65,14 +61,12 @@ def first_hour_average(timeseries):
     stdDev = (series).std()
     t = tail_avg(timeseries)
 
-    if abs(t - mean) > 3 * stdDev:
-        return True
-    return False
+    return abs(t - mean) > 3 * stdDev
 
 def simple_stddev_from_moving_average(timeseries):
     """
     A timeseries is anomalous if the absolute value of the average of the latest
-    three datapoint minus the moving average is greater than one standard 
+    three datapoint minus the moving average is greater than one standard
     deviation of the average. This does not exponentially weight the MA and so
     is better for detecting anomalies with respect to the entire series.
     """
@@ -80,30 +74,26 @@ def simple_stddev_from_moving_average(timeseries):
     mean = series.mean()
     stdDev = series.std()
     t = tail_avg(timeseries)
- 
-    if abs(t - mean) > 3 * stdDev:
-        return True
-    return False
+
+    return abs(t - mean) > 3 * stdDev
 
 def stddev_from_moving_average(timeseries):
     """
     A timeseries is anomalous if the absolute value of the average of the latest
-    three datapoint minus the moving average is greater than one standard 
-    deviation of the moving average. This is better for finding anomalies with 
+    three datapoint minus the moving average is greater than one standard
+    deviation of the moving average. This is better for finding anomalies with
     respect to the short term trends.
     """
     series = pandas.Series([x[1] for x in timeseries])
     expAverage = pandas.stats.moments.ewma(series, com=50)
     stdDev = pandas.stats.moments.ewmstd(series, com=50)
-    
-    if abs(series.iget(-1) - expAverage.iget(-1)) > 3 * stdDev.iget(-1):
-        return True
-    return False
+
+    return abs(series.iget(-1) - expAverage.iget(-1)) > 3 * stdDev.iget(-1)
 
 def mean_subtraction_cumulation(timeseries):
     """
-    A timeseries is anomalous if the value of the next datapoint in the                                                                                                          
-    series is farther than a standard deviation out in cumulative terms                                                                                                        
+    A timeseries is anomalous if the value of the next datapoint in the
+    series is farther than a standard deviation out in cumulative terms
     after subtracting the mean from each data point.
     """
 
@@ -112,9 +102,7 @@ def mean_subtraction_cumulation(timeseries):
     stdDev = series[0:len(series) - 1].std()
     expAverage = pandas.stats.moments.ewma(series, com=15)
 
-    if abs(series.iget(-1)) > 3 * stdDev:
-        return True
-    return False
+    return abs(series.iget(-1)) > 3 * stdDev
 
 def least_squares(timeseries):
     """
@@ -136,13 +124,11 @@ def least_squares(timeseries):
 
     if len(errors) < 3:
     	return False
-    
+
     std_dev = scipy.std(errors)
     t = (errors[-1] + errors[-2] + errors[-3]) / 3
-    if abs(t) > std_dev * 3 and round(std_dev) != 0 and round(t) != 0:
-        return True
-    return False
 
+    return abs(t) > std_dev * 3 and round(std_dev) != 0 and round(t) != 0
 
 def histogram_bins(timeseries):
     """
@@ -160,10 +146,10 @@ def histogram_bins(timeseries):
     bins = h[1]
     for index, bin_size in enumerate(h[0]):
         if bin_size <= 20:
-            # Is it in the first bin? 
+            # Is it in the first bin?
             if index == 0:
                 if t <= bins[0]:
-                    return True 
+                    return True
             # Is it in the current bin?
             elif t >= bins[index] and t < bins[index + 1]:
                     return True
@@ -189,7 +175,7 @@ def run_selected_algorithm(timeseries):
         raise Incomplete()
 
     # Get rid of boring series
-    total = sum(tuple[1] for tuple in timeseries[-MAX_TOLERABLE_BOREDOM:])
+    total = sum(item[1] for item in timeseries[-MAX_TOLERABLE_BOREDOM:])
     if total == 0:
         raise Boring()
 
@@ -201,5 +187,5 @@ def run_selected_algorithm(timeseries):
 
         return False, ensemble, timeseries[-1][1]
     except:
-        logging.error("Algorithm error: " + traceback.format_exc()) 
+        logging.error("Algorithm error: " + traceback.format_exc())
         return False, [], 1

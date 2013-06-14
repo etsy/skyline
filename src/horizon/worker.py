@@ -1,12 +1,9 @@
 from os import kill, system
-from random import randrange, randint
 from redis import StrictRedis, WatchError
 from multiprocessing import Process
 from Queue import Empty
-from msgpack import Unpacker, packb, unpackb
+from msgpack import packb
 from time import time, sleep
-from numpy import array, dtype, fromfile, float16, int32, save
-from io import BytesIO
 
 import logging
 import settings
@@ -19,7 +16,7 @@ class Worker(Process):
     the latest datapoints to their respective timesteps in Redis.
     """
     def __init__(self, queue, parent_pid):
-        Process.__init__(self)
+        super(Worker, self).__init__()
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
         self.q = queue
         self.parent_pid = parent_pid
