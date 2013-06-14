@@ -79,6 +79,11 @@ See [wiki](https://github.com/etsy/skyline/wiki/Analyzer)
 See the rest of the
 [wiki](https://github.com/etsy/skyline/wiki)
 
+### Contributions
+We actively welcome contributions. If you don't know where to start, try
+checking out the [issue list](https://github.com/etsy/skyline/issues) and
+fixing up the place. Or, you can add an algorithm - a goal of this project
+is to have a very robust set of algorithms to choose from.
 
 (*depending on your data throughput, *you might need to write your own
 algorithms to handle your exact data, *it runs on one box)
