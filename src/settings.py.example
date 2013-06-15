@@ -62,11 +62,11 @@ STALE_PERIOD = 500
 # to recognize it as a complete series.
 MIN_TOLERABLE_LENGTH = 1
 
-# Sometimes a metric will continually transmit 0. There's no need to analyze
-# metrics that remain boring like this, so this setting determines the amount
-# of boring datapoints that will be allowed to accumulate before the analyzer
-# skips over the metric. If the metric becomes noisy again, the analyzer will
-# stop ignoring it.
+# Sometimes a metric will continually transmit the same number. There's no need
+# to analyze metrics that remain boring like this, so this setting determines
+# the amount of boring datapoints that will be allowed to accumulate before the
+# analyzer skips over the metric. If the metric becomes noisy again, the
+# analyzer will stop ignoring it.
 MAX_TOLERABLE_BOREDOM = 100
 
 # The canary metric should be a metric with a very high, reliable resolution
@@ -105,7 +105,7 @@ UDP_PORT = 2025
 
 # This is how big a 'chunk' of metrics will be before they are added onto
 # the shared queue for processing into Redis. If you are noticing that Horizon
-# is having trouble consuming metrics, try setting this value a little higher.
+# is having trouble consuming metrics, try setting this value a higher.
 CHUNK_SIZE = 10
 
 # This is the maximum allowable length of the processing queue before new
@@ -123,7 +123,7 @@ ROOMBA_PROCESSES = 1
 
 # The Horizon agent will ignore incoming datapoints if their timestamp
 # is older than MAX_RESOLUTION seconds ago.
-MAX_RESOLUTION = 10
+MAX_RESOLUTION = 1000
 
 # These are metrics that, for whatever reason, you do not want to store 
 # in Skyline. The Listener will check to see if each incoming metrics
