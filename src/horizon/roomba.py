@@ -162,10 +162,10 @@ class Roomba(Thread):
             # Spawn processes
             pids = []
             for i in range(1, settings.ROOMBA_PROCESSES + 1):
-                p = Process(target=self.vacuum, args=(i, settings.MINI_NAMESPACE, settings.MINI_DURATION))
+                p = Process(target=self.vacuum, args=(i, settings.MINI_NAMESPACE, settings.MINI_DURATION + settings.ROOMBA_GRACE_TIME))
                 pids.append(p)
                 p.start()
-                p = Process(target=self.vacuum, args=(i, settings.FULL_NAMESPACE, settings.FULL_DURATION))
+                p = Process(target=self.vacuum, args=(i, settings.FULL_NAMESPACE, settings.FULL_DURATION + settings.ROOMBA_GRACE_TIME))
                 pids.append(p)
                 p.start()
 
