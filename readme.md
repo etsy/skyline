@@ -1,6 +1,6 @@
 ## Skyline
 
-![x](https://api.travis-ci.org/etsy/skyline.png)
+[![Build Status](https://travis-ci.org/etsy/skyline.png)](https://travis-ci.org/etsy/skyline)
 
 ![x](https://raw.github.com/etsy/skyline/master/screenshot.png)
 
