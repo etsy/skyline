@@ -1,5 +1,7 @@
 ## Skyline
 
+![x](https://api.travis-ci.org/etsy/skyline.png)
+
 ![x](https://raw.github.com/etsy/skyline/master/screenshot.png)
 
 Skyline is a real-time* anomaly detection* system*, built to enable passive
