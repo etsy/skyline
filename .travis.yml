@@ -1,0 +1,13 @@
+language: python
+python:
+  - "2.7"
+install:
+  - wget http://09c8d0b2229f813c1b93-c95ac804525aac4b6dba79b00b39d1d3.r79.cf1.rackcdn.com/Anaconda-1.6.0-Linux-x86_64.sh
+  - chmod +x Anaconda-1.6.0-Linux-x86_64.sh
+  - ./Anaconda-1.6.0-Linux-x86_64.sh -b
+  - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install -r requirements.txt --use-mirrors
+  - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install patsy --use-mirrors
+  - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install msgpack_python --use-mirrors
+  - cp src/settings.py.example src/settings.py
+script:
+  - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH nosetests -v --nocapture

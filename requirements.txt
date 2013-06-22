@@ -3,3 +3,5 @@ hiredis==0.1.1
 python-daemon==1.6
 flask==0.9
 simplejson==2.0.9
+unittest2
+mock

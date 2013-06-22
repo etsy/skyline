@@ -6,7 +6,15 @@ from time import time
 import traceback
 import logging
 
-from settings import *
+from settings import (
+    ALGORITHMS,
+    CONSENSUS,
+    FULL_DURATION,
+    MAX_TOLERABLE_BOREDOM,
+    MIN_TOLERABLE_LENGTH,
+    STALE_PERIOD
+)
+
 from algorithm_exceptions import *
 
 logger = logging.getLogger("AnalyzerLog")
