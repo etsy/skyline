@@ -8,8 +8,6 @@ install:
   - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install -r requirements.txt --use-mirrors
   - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install patsy --use-mirrors
   - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install msgpack_python --use-mirrors
-  - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install unittest2 --use-mirrors
-  - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install mock --use-mirrors
   - cp src/settings.py.example src/settings.py
 script:
   - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH nosetests -v --nocapture
