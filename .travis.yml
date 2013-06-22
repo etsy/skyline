@@ -11,3 +11,5 @@ install:
   - cp src/settings.py.example src/settings.py
 script:
   - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH nosetests -v --nocapture
+notifications:
+  email: false
