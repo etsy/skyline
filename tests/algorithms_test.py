@@ -17,7 +17,7 @@ class TestAlgorithms(unittest.TestCase):
     """
     
     def _addSkip(self, test, reason):
-        return super(TestAlgorithms, self)._addSkip(test, reason)
+        print reason
 
     def data(self, ts):
         """ 
