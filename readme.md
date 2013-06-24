@@ -87,5 +87,9 @@ checking out the [issue list](https://github.com/etsy/skyline/issues) and
 fixing up the place. Or, you can add an algorithm - a goal of this project
 is to have a very robust set of algorithms to choose from.
 
+Also, feel free to join the 
+[skyline-dev](https://groups.google.com/forum/#!/skyline-dev/) mailing list
+for support and discussions of new features.
+
 (*depending on your data throughput, *you might need to write your own
 algorithms to handle your exact data, *it runs on one box)
