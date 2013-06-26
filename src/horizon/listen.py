@@ -17,6 +17,11 @@ class Listen(Process):
     """
     def __init__(self, port, queue, parent_pid, type="pickle"):
         super(Listen, self).__init__()
+        try:
+            self.ip = settings.HORIZON_IP
+        except AttributeError:
+            # Default for backwards compatibility
+            self.ip = socket.gethostname()
         self.port = port
         self.q = queue
         self.daemon = True
@@ -64,7 +69,7 @@ class Listen(Process):
                 # Set up the TCP listening socket 
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-                s.bind((socket.gethostname(), self.port))
+                s.bind((self.ip, self.port))
                 s.setblocking(1)
                 s.listen(5)
                 logger.info('listening over tcp for pickles on %s' % self.port)
@@ -111,7 +116,7 @@ class Listen(Process):
         while 1:
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                s.bind((socket.gethostname(), self.port))
+                s.bind((self.ip, self.port))
                 logger.info('listening over udp for messagepack on %s' % self.port)
 
                 chunk = []
