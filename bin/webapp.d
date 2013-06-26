@@ -2,11 +2,12 @@
 #
 # This is used to start/stop webapp 
 
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 RETVAL=0
 
 start () {
-    rm ../src/webapp/*.pyc
-    /usr/bin/env python ../src/webapp/webapp.py start
+    rm -f $BASEDIR/src/webapp/*.pyc
+    /usr/bin/env python $BASEDIR/src/webapp/webapp.py start
         RETVAL=$?
         if [[ $RETVAL -eq 0 ]]; then
             echo "started webapp"
@@ -17,7 +18,7 @@ start () {
 }
 
 stop () {
-    /usr/bin/env python ../src/webapp/webapp.py stop
+    /usr/bin/env python $BASEDIR/src/webapp/webapp.py stop
         RETVAL=$?
         if [[ $RETVAL -eq 0 ]]; then
             echo "stopped webapp"
@@ -28,8 +29,8 @@ stop () {
 }
 
 restart () {
-    rm ../src/webapp/*.pyc
-    /usr/bin/env python ../src/webapp/webapp.py restart
+    rm -f $BASEDIR/src/webapp/*.pyc
+    /usr/bin/env python $BASEDIR/src/webapp/webapp.py restart
         RETVAL=$?
         if [[ $RETVAL -eq 0 ]]; then
             echo "restarted webapp"
