@@ -2,11 +2,12 @@
 #
 # This is used to start/stop the analyzer
 
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 RETVAL=0
 
 start () {
-    rm ../src/analyzer/*.pyc
-    /usr/bin/env python ../src/analyzer/analyzer-agent.py start
+    rm -f $BASEDIR/src/analyzer/*.pyc
+    /usr/bin/env python $BASEDIR/src/analyzer/analyzer-agent.py start
         RETVAL=$?
         if [[ $RETVAL -eq 0 ]]; then
             echo "started analyzer-agent"
@@ -19,7 +20,7 @@ start () {
 stop () {
     # TODO: write a real kill script
     ps aux | grep 'analyzer-agent.py start' | grep -v grep | awk '{print $2 }' | xargs sudo kill -9
-    /usr/bin/env python ../src/analyzer/analyzer-agent.py stop
+    /usr/bin/env python $BASEDIR/src/analyzer/analyzer-agent.py stop
         RETVAL=$?
         if [[ $RETVAL -eq 0 ]]; then
             echo "stopped analyzer-agent"
