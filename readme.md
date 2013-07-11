@@ -66,7 +66,12 @@ restart using the configuration settings provided in bin/redis.conf
 
 ### Hey! Nothing's happening!
 Of course not. You've got no data! For a quick and easy test of what you've 
-got, run `python utils/seed_data.py`. This will ensure that the Horizon
+got, run this:
+```
+cd utils
+python seed_data.py
+```
+This will ensure that the Horizon
 service is properly set up and can receive data. For real data, you have some 
 options - see [wiki](https://github.com/etsy/skyline/wiki/Getting-Data-Into-Skyline)
 
