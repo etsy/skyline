@@ -189,7 +189,7 @@ class Analyzer(Thread):
                 time_human = (timeseries[-1][0] - timeseries[0][0]) / 3600
                 projected = 24 * (time() - now) / time_human
 
-                logger.info('canary duration  :: %.2f' % time_human)
+                logger.info('canary duration   :: %.2f' % time_human)
                 if settings.GRAPHITE_HOST != '':
                     host = settings.GRAPHITE_HOST.replace('http://', '')
                     system('echo skyline.analyzer.duration %.2f %s | nc -w 3 %s 2003' % (time_human, now, host))
