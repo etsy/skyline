@@ -61,7 +61,7 @@ if __name__ == "__main__":
     if not isdir(settings.LOG_PATH):
         print 'log directory does not exist at %s' % settings.LOG_PATH
         sys.exit(1)
-    
+
     horizon = Horizon()
 
     logger = logging.getLogger("HorizonLog")
@@ -71,6 +71,9 @@ if __name__ == "__main__":
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    daemon_runner = runner.DaemonRunner(horizon)
-    daemon_runner.daemon_context.files_preserve=[handler.stream]
-    daemon_runner.do_action()
+    if len(sys.argv) > 1 and sys.argv[1] == 'run':
+        horizon.run()
+    else:
+        daemon_runner = runner.DaemonRunner(horizon)
+        daemon_runner.daemon_context.files_preserve=[handler.stream]
+        daemon_runner.do_action()

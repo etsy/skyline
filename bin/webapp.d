@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This is used to start/stop webapp 
+# This is used to start/stop webapp
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 RETVAL=0
@@ -40,6 +40,10 @@ restart () {
         return $RETVAL
 }
 
+run () {
+    /usr/bin/env python $BASEDIR/src/webapp/webapp.py run
+}
+
 # See how we were called.
 case "$1" in
   start)
@@ -50,7 +54,10 @@ case "$1" in
         ;;
   restart)
     restart
-    ;;
+        ;;
+  run)
+    run
+        ;;
 
   *)
         echo $"Usage: $0 {start|stop}"

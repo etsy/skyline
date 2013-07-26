@@ -30,6 +30,9 @@ stop () {
         return $RETVAL
 }
 
+run () {
+    /usr/bin/env python $BASEDIR/src/analyzer/analyzer-agent.py run
+}
 
 # See how we were called.
 case "$1" in
@@ -39,6 +42,10 @@ case "$1" in
   stop)
     stop
         ;;
+  run)
+    run
+        ;;
+
   *)
         echo $"Usage: $0 {start|stop}"
         exit 2
