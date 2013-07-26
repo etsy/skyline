@@ -47,7 +47,7 @@ case "$1" in
         ;;
 
   *)
-        echo $"Usage: $0 {start|stop}"
+        echo $"Usage: $0 {start|stop|run}"
         exit 2
         ;;
 esac
