@@ -31,6 +31,7 @@ stop () {
 }
 
 run () {
+    echo "running horizon"
     /usr/bin/env python $BASEDIR/src/horizon/horizon-agent.py run
 }
 

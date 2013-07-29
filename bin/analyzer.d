@@ -31,6 +31,7 @@ stop () {
 }
 
 run () {
+    echo "running analyzer"
     /usr/bin/env python $BASEDIR/src/analyzer/analyzer-agent.py run
 }
 

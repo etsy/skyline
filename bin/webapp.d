@@ -41,6 +41,7 @@ restart () {
 }
 
 run () {
+    echo "running webapp"
     /usr/bin/env python $BASEDIR/src/webapp/webapp.py run
 }
 
