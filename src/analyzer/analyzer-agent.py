@@ -48,6 +48,9 @@ if __name__ == "__main__":
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    daemon_runner = runner.DaemonRunner(analyzer)
-    daemon_runner.daemon_context.files_preserve=[handler.stream]
-    daemon_runner.do_action()
+    if len(sys.argv) > 1 and sys.argv[1] == 'run':
+        analyzer.run()
+    else:
+        daemon_runner = runner.DaemonRunner(analyzer)
+        daemon_runner.daemon_context.files_preserve=[handler.stream]
+        daemon_runner.do_action()

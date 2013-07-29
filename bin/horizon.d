@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This is used to start/stop horizon 
+# This is used to start/stop horizon
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 RETVAL=0
@@ -30,6 +30,10 @@ stop () {
         return $RETVAL
 }
 
+run () {
+    echo "running horizon"
+    /usr/bin/env python $BASEDIR/src/horizon/horizon-agent.py run
+}
 
 # See how we were called.
 case "$1" in
@@ -39,9 +43,12 @@ case "$1" in
   stop)
     stop
         ;;
+  run)
+    run
+        ;;
 
   *)
-        echo $"Usage: $0 {start|stop}"
+        echo $"Usage: $0 {start|stop|run}"
         exit 2
         ;;
 esac
