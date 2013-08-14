@@ -84,11 +84,12 @@ ALGORITHMS = [
                 'grubbs',
                 'histogram_bins',
                 'median_absolute_deviation',
+                'ks_test',
              ]
 
 # This is the number of algorithms that must return True before a metric is
 # classified as anomalous.
-CONSENSUS = 6
+CONSENSUS = 7
 
 """
 Horizon settings
