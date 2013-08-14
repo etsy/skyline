@@ -187,6 +187,26 @@ def histogram_bins(timeseries):
 
     return False
 
+def ks_test(timeseries):
+    """
+    A timeseries is anomalous if 2 sample Kolmogorov-Smirnov test indicates
+    that data distribution for last 10 minutes is different from last hour.
+    It produces false positives on non-stationary series so Augmented
+    Dickey-Fuller test applied to check for stationarity.
+    """
+
+    hour_ago = time() - 3600
+    ten_minutes_ago = time() - 600
+    reference = scipy.array([x[1] for x in timeseries if x[0] >= hour_ago and x[0] < ten_minutes_ago])
+    probe = scipy.array([x[1] for x in timeseries if x[0] >= ten_minutes_ago])
+    ks_d,ks_p_value = scipy.stats.ks_2samp(reference, probe)
+
+    if ks_p_value < 0.05 and ks_d > 0.5:
+        adf = sm.tsa.stattools.adfuller(reference, 10)
+        if  adf[1] < 0.05:
+            return True
+
+    return False
 
 def run_selected_algorithm(timeseries):
     """
