@@ -192,7 +192,7 @@ def ks_test(timeseries):
     A timeseries is anomalous if 2 sample Kolmogorov-Smirnov test indicates
     that data distribution for last 10 minutes is different from last hour.
     It produces false positives on non-stationary series so Augmented
-    Dickey–Fuller test applied to check for stationarity.
+    Dickey-Fuller test applied to check for stationarity.
     """
 
     hour_ago = time() - 3600
