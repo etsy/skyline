@@ -199,6 +199,10 @@ def ks_test(timeseries):
     ten_minutes_ago = time() - 600
     reference = scipy.array([x[1] for x in timeseries if x[0] >= hour_ago and x[0] < ten_minutes_ago])
     probe = scipy.array([x[1] for x in timeseries if x[0] >= ten_minutes_ago])
+
+    if reference.size < 20 or probe.size < 20:
+        return False
+
     ks_d,ks_p_value = scipy.stats.ks_2samp(reference, probe)
 
     if ks_p_value < 0.05 and ks_d > 0.5:
