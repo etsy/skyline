@@ -80,8 +80,8 @@ start analyzing for anomalies!
 
 ### Alerts
 Skyline can alert you via email! In your settings.py, add any alerts you want
-to the ALERTS setting, according to the schema (<metric keyword>, <recipient>,
-<expiration seconds>). For every anomalous metric, Skyline will search for the
+to the ALERTS list, according to the schema `(metric keyword, recipient,
+expiration seconds)`. For every anomalous metric, Skyline will search for the
 given keyword and alert the proper recipient. To prevent alert fatigue, Skyline
 will only alert once every <expiration seconds> for any given metric.
 
