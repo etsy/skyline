@@ -78,6 +78,13 @@ options - see [wiki](https://github.com/etsy/skyline/wiki/Getting-Data-Into-Skyl
 Once you get real data flowing through your system, the Analyzer will be able
 start analyzing for anomalies!
 
+### Alerts
+Skyline can alert you via email! In your settings.py, add any alerts you want
+to the ALERTS setting, according to the schema (<metric keyword>, <recipient>,
+<expiration seconds>). For every anomalous metric, Skyline will search for the
+given keyword and alert the proper recipient. To prevent alert fatigue, Skyline
+will only alert once every <expiration seconds> for any given metric.
+
 ### How do you actually detect anomalies?
 An ensemble of algorithms vote. Majority rules. Batteries __kind of__ included.
 See [wiki](https://github.com/etsy/skyline/wiki/Analyzer)
