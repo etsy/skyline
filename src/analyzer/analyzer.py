@@ -4,9 +4,13 @@ from time import time, sleep
 from threading import Thread
 from collections import defaultdict
 from multiprocessing import Process, Manager, Lock
-from msgpack import Unpacker
+from msgpack import Unpacker, unpackb, packb
 from os import path, kill, getpid, system
 from math import ceil
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+from email.MIMEImage import MIMEImage
+from smtplib import SMTP
 import traceback
 import operator
 import settings
@@ -82,7 +86,8 @@ class Analyzer(Thread):
 
                 # If it's anomalous, add it to list
                 if anomalous:
-                    metric = [datapoint, metric_name]
+                    base_name = metric_name.replace(settings.FULL_NAMESPACE, '', 1)
+                    metric = [datapoint, base_name]
                     self.anomalous_metrics.append(metric)
 
                     # Get the anomaly breakdown - who returned True?
@@ -119,6 +124,21 @@ class Analyzer(Thread):
                     self.exceptions[key] = value
                 else:
         	        self.exceptions[key] += value
+
+    def send_mail(self, alert, metric):
+        """
+        Send an alert email to the appropriate recipient
+        """
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = '[skyline alert] ' + metric[1]
+        msg['From'] = settings.ALERT_SENDER
+        msg['To'] = alert[1]
+        link = '%s/render/?width=588&height=308&target=%s' % (settings.GRAPHITE_HOST, metric[1])
+        body = 'Anomalous value: %s <br> Next alert in: %s seconds <a href="%s"><img src="%s"/></a>' % (metric[0], alert[2], link, link)
+        msg.attach(MIMEText(body, 'html'))
+        s = SMTP('127.0.0.1')
+        s.sendmail(settings.ALERT_SENDER, alert[1], msg.as_string())
+        s.quit()
 
     def run(self):
         """
@@ -159,6 +179,19 @@ class Analyzer(Thread):
             for p in pids:
                 p.join()
 
+            # Send alerts
+            if settings.ENABLE_ALERTS:
+                for alert in settings.ALERTS:
+                    for metric in self.anomalous_metrics:
+                        if alert[0] in metric[1]:
+                            try:
+                                last_alert = self.redis_conn.get('last_alert.' + metric[1])
+                                if not last_alert:
+                                    self.redis_conn.setex('last_alert.' + metric[1], alert[2], packb(metric[0]))
+                                    self.send_mail(alert, metric)
+                            except Exception as e:
+                                logger.error("couldn't send alert: %s" % e)
+
             # Write anomalous_metrics to static webapp directory
             filename = path.abspath(path.join(path.dirname( __file__ ), '..', settings.ANOMALY_DUMP))
             with open(filename, 'w') as fh:
@@ -179,6 +212,7 @@ class Analyzer(Thread):
             if settings.GRAPHITE_HOST != '':
                 host = settings.GRAPHITE_HOST.replace('http://', '')
                 system('echo skyline.analyzer.run_time %.2f %s | nc -w 3 %s 2003' % ((time() - now), now, host))
+                system('echo skyline.analyzer.total_analyzed %d %s | nc -w 3 %s 2003' % ((len(unique_metrics) - sum(self.exceptions.values())), now, host))
 
             # Check canary metric
             raw_series = self.redis_conn.get(settings.FULL_NAMESPACE + settings.CANARY_METRIC)

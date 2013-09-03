@@ -17,7 +17,7 @@ var handle_data = function(data) {
 
     for (i in data) {
         metric = data[i];
-        name = metric[1].replace(FULL_NAMESPACE, '');
+        name = metric[1]
         var src = GRAPHITE_HOST + '/render/?width=1400&from=-1hour&target=' + name;
         // Add a space after the metric name to make each unique
         to_append = "<div class='sub'><a target='_blank' href='" + src + "'><div class='name'>" + name + " </div></a>&nbsp;&nbsp;<a class='oculus' target='_blank' href=" + OCULUS_HOST + "/search?p_slop=20&dtw_radius=5&search_type=FastDTW&query=" + name + "&page=&filters=><i class='icon-share-alt'></i></a><div class='count'>" + parseInt(metric[0]) + "</div>";
@@ -25,7 +25,7 @@ var handle_data = function(data) {
     }
 
     if (initial) {
-        selected = data[0][1].replace(FULL_NAMESPACE, '');
+        selected = data[0][1];
         initial = false;
     }
 

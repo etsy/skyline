@@ -91,6 +91,23 @@ ALGORITHMS = [
 # classified as anomalous.
 CONSENSUS = 7
 
+# This enables email alerting.
+ENABLE_ALERTS = True
+
+# This specifies the sender of the email alerts.
+ALERT_SENDER = "skyline-alerts@etsy.com"
+
+# This is the config for which metrics to alert on and who to send them to.
+# Alerts will not fire twice within EXPIRATION_TIME, even if they trigger again.
+# Schema: (
+#          ("metric1", "recipient1", EXPIRATION_TIME),
+#          ("metric2", "recipient2", EXPIRATION_TIME),
+#         )
+ALERTS = (
+            ("skyline", "abe@etsy.com", 1800),
+         )
+
+
 """
 Horizon settings
 """
