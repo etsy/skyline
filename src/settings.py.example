@@ -91,21 +91,52 @@ ALGORITHMS = [
 # classified as anomalous.
 CONSENSUS = 7
 
-# This enables email alerting.
+# This enables alerting.
 ENABLE_ALERTS = True
 
-# This specifies the sender of the email alerts.
-ALERT_SENDER = "skyline-alerts@etsy.com"
-
-# This is the config for which metrics to alert on and who to send them to.
+# This is the config for which metrics to alert on and which strategy to use for each.
 # Alerts will not fire twice within EXPIRATION_TIME, even if they trigger again.
 # Schema: (
-#          ("metric1", "recipient1", EXPIRATION_TIME),
-#          ("metric2", "recipient2", EXPIRATION_TIME),
+#          ("metric1", "smtp", EXPIRATION_TIME),
+#          ("metric2", "pagerduty", EXPIRATION_TIME),
+#          ("metric3", "hipchat", EXPIRATION_TIME),
 #         )
 ALERTS = (
-            ("skyline", "abe@etsy.com", 1800),
-         )
+			("skyline", "smtp", 1800),
+		 )
+
+# Each alert module requires additional information.
+SMTP_OPTS = {
+    # This specifies the sender of email alerts.
+    "sender": "skyline-alerts@etsy.com",
+    # recipients is a dictionary mapping metric names
+    # (exactly matching those listed in ALERTS) to e-mail addresses
+    "recipients": {
+        "skyline": "abe@etsy.com",
+    },
+}
+
+# HipChat alerts require python-simple-hipchat
+HIPCHAT_OPTS = {
+    "auth_token": "pagerduty_auth_token",
+    # list of hipchat room_ids to notify about each anomaly
+    # (similar to SMTP_OPTS['recipients'])
+    "rooms":{
+        "skyline": (12345,),
+    }
+    # Background color of hipchat messages
+    # (One of "yellow", "red", "green", "purple", "gray", or "random".)
+    "color": "purple",
+}
+
+# PagerDuty alerts require pygerduty
+PAGERDUTY_OPTS = {
+    # Your pagerduty subdomain and auth token
+    "subdomain": "example",
+    "auth_token": "your_pagerduty_auth_token",
+    # Service API key (shown on the detail page of a "Generic API" service)
+    "key": "your_pagerduty_service_api_key",
+}
 
 
 """

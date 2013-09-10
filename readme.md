@@ -79,11 +79,13 @@ Once you get real data flowing through your system, the Analyzer will be able
 start analyzing for anomalies!
 
 ### Alerts
-Skyline can alert you via email! In your settings.py, add any alerts you want
-to the ALERTS list, according to the schema `(metric keyword, recipient,
-expiration seconds)`. For every anomalous metric, Skyline will search for the
-given keyword and alert the proper recipient. To prevent alert fatigue, Skyline
-will only alert once every <expiration seconds> for any given metric.
+Skyline can alert you! In your settings.py, add any alerts you want to the ALERTS
+list, according to the schema `(metric keyword, strategy, expiration seconds)` where
+`strategy` is one of `smtp`, `hipchat`, or `pagerduty`. You can also add your own
+alerting strategies. For every anomalous metric, Skyline will search for the given
+keyword and trigger the corresponding alert(s). To prevent alert fatigue, Skyline
+will only alert once every <expiration seconds> for any given metric/strategy
+combination.
 
 ### How do you actually detect anomalies?
 An ensemble of algorithms vote. Majority rules. Batteries __kind of__ included.

@@ -7,14 +7,11 @@ from multiprocessing import Process, Manager, Lock
 from msgpack import Unpacker, unpackb, packb
 from os import path, kill, getpid, system
 from math import ceil
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEText import MIMEText
-from email.MIMEImage import MIMEImage
-from smtplib import SMTP
 import traceback
 import operator
 import settings
 
+from alerters import trigger_alert
 from algorithms import run_selected_algorithm
 from algorithm_exceptions import *
 
@@ -125,20 +122,7 @@ class Analyzer(Thread):
                 else:
         	        self.exceptions[key] += value
 
-    def send_mail(self, alert, metric):
-        """
-        Send an alert email to the appropriate recipient
-        """
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = '[skyline alert] ' + metric[1]
-        msg['From'] = settings.ALERT_SENDER
-        msg['To'] = alert[1]
-        link = '%s/render/?width=588&height=308&target=%s' % (settings.GRAPHITE_HOST, metric[1])
-        body = 'Anomalous value: %s <br> Next alert in: %s seconds <a href="%s"><img src="%s"/></a>' % (metric[0], alert[2], link, link)
-        msg.attach(MIMEText(body, 'html'))
-        s = SMTP('127.0.0.1')
-        s.sendmail(settings.ALERT_SENDER, alert[1], msg.as_string())
-        s.quit()
+
 
     def run(self):
         """
@@ -184,11 +168,13 @@ class Analyzer(Thread):
                 for alert in settings.ALERTS:
                     for metric in self.anomalous_metrics:
                         if alert[0] in metric[1]:
+                            cache_key = 'last_alert.%s.%s' % (alert[1], metric[1])
                             try:
-                                last_alert = self.redis_conn.get('last_alert.' + metric[1])
+                                last_alert = self.redis_conn.get(cache_key)
                                 if not last_alert:
-                                    self.redis_conn.setex('last_alert.' + metric[1], alert[2], packb(metric[0]))
-                                    self.send_mail(alert, metric)
+                                    self.redis_conn.setex(cache_key, alert[2], packb(metric[0]))
+                                    trigger_alert(alert, metric)
+
                             except Exception as e:
                                 logger.error("couldn't send alert: %s" % e)
 
