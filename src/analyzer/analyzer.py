@@ -79,7 +79,7 @@ class Analyzer(Thread):
                 unpacker.feed(raw_series)
                 timeseries = list(unpacker)
 
-                anomalous, ensemble, datapoint = run_selected_algorithm(timeseries)
+                anomalous, ensemble, datapoint = run_selected_algorithm(timeseries, metric_name)
 
                 # If it's anomalous, add it to list
                 if anomalous:

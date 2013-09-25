@@ -2,9 +2,11 @@ import pandas
 import numpy as np
 import scipy
 import statsmodels.api as sm
-from time import time
 import traceback
 import logging
+from time import time
+from msgpack import unpackb, packb
+from redis import StrictRedis
 
 from settings import (
     ALGORITHMS,
@@ -12,12 +14,14 @@ from settings import (
     FULL_DURATION,
     MAX_TOLERABLE_BOREDOM,
     MIN_TOLERABLE_LENGTH,
-    STALE_PERIOD
+    STALE_PERIOD,
+    REDIS_SOCKET_PATH
 )
 
 from algorithm_exceptions import *
 
 logger = logging.getLogger("AnalyzerLog")
+redis_conn = StrictRedis(unix_socket_path = REDIS_SOCKET_PATH)
 
 """
 This is no man's land. Do anything you want in here,
@@ -212,7 +216,46 @@ def ks_test(timeseries):
 
     return False
 
-def run_selected_algorithm(timeseries):
+def is_anomalously_anomalous(metric_name, ensemble, datapoint):
+    """
+    This method runs a meta-analysis on the metric to determine whether the 
+    metric has a past history of triggering.
+    """
+    # We want the datapoint to avoid triggering twice on the same data
+    new_trigger = [time(), datapoint]
+
+    # Get the old history
+    raw_trigger_history = redis_conn.get('trigger_history.' + metric_name)
+    if not raw_trigger_history:
+        redis_conn.set('trigger_history.' + metric_name, packb([(time(), datapoint)]))
+        return True
+
+    trigger_history = unpackb(raw_trigger_history)
+
+    # Are we (probably) triggering on the same data?
+    if (new_trigger[1] == trigger_history[-1][1] and
+    	new_trigger[0] - trigger_history[-1][0] <= 300):
+        return False
+
+    # Update the history
+    trigger_history.append(new_trigger)
+    redis_conn.set('trigger_history.' + metric_name, packb(trigger_history))
+
+    # Should we surface the anomaly?
+    trigger_times = [x[0] for x in trigger_history]
+    intervals = [
+                    trigger_times[i + 1] - trigger_times[i]
+                    for i, v in enumerate(trigger_times)
+                    if (i + 1) < len(trigger_times)
+                ]
+
+    series = pandas.Series(intervals)
+    mean = series.mean()
+    stdDev = series.std()
+
+    return abs(intervals[-1] - mean) > 3 * stdDev
+
+def run_selected_algorithm(timeseries, metric_name):
     """
     Filter timeseries and run selected algorithm.
     """
@@ -237,7 +280,8 @@ def run_selected_algorithm(timeseries):
         ensemble = [globals()[algorithm](timeseries) for algorithm in ALGORITHMS]
         threshold = len(ensemble) - CONSENSUS
         if ensemble.count(False) <= threshold:
-            return True, ensemble, tail_avg(timeseries)
+            if is_anomalously_anomalous(metric_name, ensemble, timeseries[-1][1]):
+                return True, ensemble, timeseries[-1][1]
 
         return False, ensemble, timeseries[-1][1]
     except:
