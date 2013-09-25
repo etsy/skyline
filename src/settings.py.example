@@ -123,7 +123,7 @@ HIPCHAT_OPTS = {
     # (similar to SMTP_OPTS['recipients'])
     "rooms":{
         "skyline": (12345,),
-    }
+    },
     # Background color of hipchat messages
     # (One of "yellow", "red", "green", "purple", "gray", or "random".)
     "color": "purple",
