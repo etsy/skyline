@@ -57,6 +57,8 @@ By default, the webapp is served on port 1500.
 
 7. Check the log files to ensure things are running.
 
+[Debian + Vagrant specific, if you prefer](https://github.com/etsy/skyline/wiki/Debian-and-Vagrant-Installation-Tips)
+
 ### Gotchas
 
 * If you already have a Redis instance running, it's recommended to kill it and
