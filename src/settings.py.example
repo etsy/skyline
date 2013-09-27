@@ -36,6 +36,8 @@ GRAPHITE_HOST = 'http://your_graphite_host.com'
 
 # If you have Oculus set up, set this metric to set the clickthrough
 # on the webapp. Include http://.
+# If you don't want to use Oculus, set this to an empty string. If 
+# you comment this out, it won't work!
 OCULUS_HOST = 'http://your_oculus_host.com'
 
 """ 

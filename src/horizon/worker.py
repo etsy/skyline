@@ -55,6 +55,13 @@ class Worker(Process):
         mini_uniques = MINI_NAMESPACE + 'unique_metrics'
         pipe = self.redis_conn.pipeline()
 
+        #If we're not using oculus, don't bother writing to mini
+        try:
+          skip_mini = True if settings.OCULUS_HOST == '' else False
+        except Exception:
+          skip_mini = True
+
+
         while 1:
 
             # Make sure Redis is up
@@ -87,10 +94,11 @@ class Worker(Process):
                     pipe.append(key, packb(metric[1]))
                     pipe.sadd(full_uniques, key)
                     
-                    # Append to mini namespace
-                    mini_key = ''.join((MINI_NAMESPACE, metric[0]))
-                    pipe.append(mini_key, packb(metric[1]))
-                    pipe.sadd(mini_uniques, mini_key)
+                    if not skip_mini:
+                      # Append to mini namespace
+                      mini_key = ''.join((MINI_NAMESPACE, metric[0]))
+                      pipe.append(mini_key, packb(metric[1]))
+                      pipe.sadd(mini_uniques, mini_key)
 
                     pipe.execute()
 
