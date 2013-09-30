@@ -94,7 +94,7 @@ class Analyzer(Thread):
                             anomaly_breakdown[algorithm] += 1
 
             # It could have been deleted by the Roomba
-            except AttributeError:
+            except TypeError:
                 exceptions['DeletedByRoomba'] += 1
             except TooShort:
                 exceptions['TooShort'] += 1

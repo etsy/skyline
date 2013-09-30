@@ -78,6 +78,7 @@ class Roomba(Thread):
                         if timeseries[0] < now - duration:
                             pipe.delete(key)
                             pipe.srem(namespace + 'unique_metrics', key)
+                            pipe.execute()
                             euthanized += 1
                         continue
                 except IndexError:
@@ -87,6 +88,7 @@ class Roomba(Thread):
                 if timeseries[-1][0] < now - duration:
                     pipe.delete(key)
                     pipe.srem(namespace + 'unique_metrics', key)
+                    pipe.execute()
                     euthanized += 1
                     continue
 
@@ -126,6 +128,7 @@ class Roomba(Thread):
                 # If something bad happens, zap the key and hope it goes away
                 pipe.delete(key)
                 pipe.srem(namespace + 'unique_metrics', key)
+                pipe.execute()
                 euthanized += 1
                 logger.info(e)
                 logger.info("Euthanizing " + key)
