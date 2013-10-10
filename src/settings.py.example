@@ -69,6 +69,13 @@ MIN_TOLERABLE_LENGTH = 1
 # analyzer will stop ignoring it.
 MAX_TOLERABLE_BOREDOM = 100
 
+# By default, the analyzer skips a metric if it it has transmitted a single
+# number MAX_TOLERABLE_BOREDOM times. Change this setting if you wish the size
+# of the ignored set to be higher (ie, ignore the metric if there have only 
+# been two different values for the past MAX_TOLERABLE_BOREDOM datapoints).
+# This is useful for timeseries that often oscillate between two values.
+BOREDOM_SET_SIZE = 1
+
 # The canary metric should be a metric with a very high, reliable resolution
 # that you can use to gauge the status of the system as a whole.
 CANARY_METRIC = 'statsd.numStats'
@@ -202,6 +209,7 @@ SKIP_LIST = ['example.statsd.metric',
             #'.upper',
             #'.median',
             #'.count_ps',
+            #'.sum',
           ]
 
 

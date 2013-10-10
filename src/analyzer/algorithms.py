@@ -16,7 +16,8 @@ from settings import (
     MIN_TOLERABLE_LENGTH,
     STALE_PERIOD,
     REDIS_SOCKET_PATH,
-    ENABLE_SECOND_ORDER
+    ENABLE_SECOND_ORDER,
+    BOREDOM_SET_SIZE,
 )
 
 from algorithm_exceptions import *
@@ -274,7 +275,7 @@ def run_selected_algorithm(timeseries, metric_name):
         raise Incomplete()
 
     # Get rid of boring series
-    if len(set(item[1] for item in timeseries[-MAX_TOLERABLE_BOREDOM:])) == 2:
+    if len(set(item[1] for item in timeseries[-MAX_TOLERABLE_BOREDOM:])) == BOREDOM_SET_SIZE:
         raise Boring()
 
     try:
