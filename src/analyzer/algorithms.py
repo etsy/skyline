@@ -15,7 +15,8 @@ from settings import (
     MAX_TOLERABLE_BOREDOM,
     MIN_TOLERABLE_LENGTH,
     STALE_PERIOD,
-    REDIS_SOCKET_PATH
+    REDIS_SOCKET_PATH,
+    ENABLE_SECOND_ORDER
 )
 
 from algorithm_exceptions import *
@@ -219,7 +220,7 @@ def ks_test(timeseries):
 def is_anomalously_anomalous(metric_name, ensemble, datapoint):
     """
     This method runs a meta-analysis on the metric to determine whether the 
-    metric has a past history of triggering.
+    metric has a past history of triggering. TODO: weight intervals based on datapoint
     """
     # We want the datapoint to avoid triggering twice on the same data
     new_trigger = [time(), datapoint]
@@ -280,7 +281,10 @@ def run_selected_algorithm(timeseries, metric_name):
         ensemble = [globals()[algorithm](timeseries) for algorithm in ALGORITHMS]
         threshold = len(ensemble) - CONSENSUS
         if ensemble.count(False) <= threshold:
-            if is_anomalously_anomalous(metric_name, ensemble, timeseries[-1][1]):
+            if ENABLE_SECOND_ORDER:
+            	if is_anomalously_anomalous(metric_name, ensemble, timeseries[-1][1]):
+                    return True, ensemble, timeseries[-1][1]
+            else:
                 return True, ensemble, timeseries[-1][1]
 
         return False, ensemble, timeseries[-1][1]

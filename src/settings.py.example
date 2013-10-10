@@ -91,6 +91,10 @@ ALGORITHMS = [
 # classified as anomalous.
 CONSENSUS = 7
 
+# This is to enable second order anomalies. This is an experimental feature, so
+# it's turned off by default.
+ENABLE_SECOND_ORDER = False
+
 # This enables alerting.
 ENABLE_ALERTS = True
 
