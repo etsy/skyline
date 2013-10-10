@@ -66,10 +66,10 @@ class TestAlgorithms(unittest.TestCase):
     @patch.object(algorithms, 'time')
     def test_run_selected_algorithm(self, timeMock):
         timeMock.return_value, timeseries = self.data(time.time())
-        result, ensemble, tail_avg = algorithms.run_selected_algorithm(timeseries)
+        result, ensemble, datapoint = algorithms.run_selected_algorithm(timeseries, "test.metric")
         self.assertTrue(result)
         self.assertTrue(len(filter(None, ensemble)) >= settings.CONSENSUS)
-        self.assertEqual(tail_avg, 334)
+        self.assertEqual(datapoint, 1000)
 
     @unittest.skip('Fails inexplicable in certain environments.')
     @patch.object(algorithms, 'CONSENSUS')
