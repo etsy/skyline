@@ -274,7 +274,7 @@ def run_selected_algorithm(timeseries, metric_name):
         raise Incomplete()
 
     # Get rid of boring series
-    if len(set(item[1] for item in timeseries[-MAX_TOLERABLE_BOREDOM:])) == 1:
+    if len(set(item[1] for item in timeseries[-MAX_TOLERABLE_BOREDOM:])) == 2:
         raise Boring()
 
     try:
