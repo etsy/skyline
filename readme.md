@@ -41,6 +41,7 @@ trick. If not, hit the Googles, yo.
 sudo mkdir /var/log/skyline
 sudo mkdir /var/run/skyline
 sudo mkdir /var/log/redis
+sudo mkdir /var/dump/
 ```
 
 5. Download and install the latest Redis release
