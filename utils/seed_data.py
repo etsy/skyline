@@ -6,20 +6,20 @@ import pickle
 import socket
 import sys
 import time
-from os.path import abspath, dirname, join, realpath
+from os.path import dirname, join, realpath
 from multiprocessing import Manager, Process, log_to_stderr
 from struct import Struct, pack
 
 import redis
 import msgpack
 
-# add the shared settings file to namespace
-sys.path.insert(0, ''.join((dirname(dirname(abspath(__file__))), "/src" )))
-import settings
-
 # Get the current working directory of this file.
 # http://stackoverflow.com/a/4060259/120999
 __location__ = realpath(join(os.getcwd(), dirname(__file__)))
+
+# Add the shared settings file to namespace.
+sys.path.insert(0, join(__location__, '..', 'src'))
+import settings
 
 def seed():
     print "Connecting to Redis..."
