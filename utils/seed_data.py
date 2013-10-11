@@ -1,15 +1,17 @@
 #!/usr/bin/env python
+
+import json
+import os
+import pickle
+import socket
+import sys
+import time
+from os.path import abspath, dirname, join, realpath
+from multiprocessing import Manager, Process, log_to_stderr
+from struct import Struct, pack
+
 import redis
 import msgpack
-import os
-import sys
-import json
-import socket
-import time
-import pickle
-from struct import Struct, pack
-from os.path import dirname, abspath, join, realpath
-from multiprocessing import Process, Manager, log_to_stderr
 
 # add the shared settings file to namespace
 sys.path.insert(0, ''.join((dirname(dirname(abspath(__file__))), "/src" )))
