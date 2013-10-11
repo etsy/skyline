@@ -19,7 +19,7 @@ import settings
 # http://stackoverflow.com/a/4060259/120999
 __location__ = realpath(join(os.getcwd(), dirname(__file__)))
 
-if __name__ == "__main__":
+def seed():
     print "Connecting to Redis..."
     r = redis.StrictRedis(unix_socket_path=settings.REDIS_SOCKET_PATH)
     time.sleep(5)
@@ -57,3 +57,6 @@ if __name__ == "__main__":
         print "Congratulations! The data made it in. The Horizon pipeline seems to be working."
     except:
         print "Woops, looks like the metrics didn't make it into Horizon. Try again?"
+
+if __name__ == "__main__":
+   seed()
