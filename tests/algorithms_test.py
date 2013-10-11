@@ -1,6 +1,6 @@
-import time
 import unittest2 as unittest
 from mock import Mock, patch
+from time import time
 
 import sys
 from os.path import dirname, abspath
@@ -30,42 +30,42 @@ class TestAlgorithms(unittest.TestCase):
         return ts, timeseries
     
     def test_tail_avg(self):
-        _, timeseries = self.data(time.time())
+        _, timeseries = self.data(time())
         self.assertEqual(algorithms.tail_avg(timeseries), 334)
 
     def test_grubbs(self):
-        _, timeseries = self.data(time.time())
+        _, timeseries = self.data(time())
         self.assertTrue(algorithms.grubbs(timeseries))
 
     @patch.object(algorithms, 'time')
     def test_first_hour_average(self, timeMock):
-        timeMock.return_value, timeseries = self.data(time.time())
+        timeMock.return_value, timeseries = self.data(time())
         self.assertTrue(algorithms.first_hour_average(timeseries))
 
-    def test_simple_stddev_from_moving_average(self):
-        _, timeseries = self.data(time.time())
-        self.assertTrue(algorithms.simple_stddev_from_moving_average(timeseries))
+    def test_stddev_from_average(self):
+        _, timeseries = self.data(time())
+        self.assertTrue(algorithms.stddev_from_average(timeseries))
 
     def test_stddev_from_moving_average(self):
-        _, timeseries = self.data(time.time())
+        _, timeseries = self.data(time())
         self.assertTrue(algorithms.stddev_from_moving_average(timeseries))
 
     def test_mean_subtraction_cumulation(self):
-        _, timeseries = self.data(time.time())
+        _, timeseries = self.data(time())
         self.assertTrue(algorithms.mean_subtraction_cumulation(timeseries))
     
     @patch.object(algorithms, 'time')
     def test_least_squares(self, timeMock):
-        timeMock.return_value, timeseries = self.data(time.time())
+        timeMock.return_value, timeseries = self.data(time())
         self.assertTrue(algorithms.least_squares(timeseries))
     
     def test_histogram_bins(self):
-        _, timeseries = self.data(time.time())
+        _, timeseries = self.data(time())
         self.assertTrue(algorithms.histogram_bins(timeseries))
     
     @patch.object(algorithms, 'time')
     def test_run_selected_algorithm(self, timeMock):
-        timeMock.return_value, timeseries = self.data(time.time())
+        timeMock.return_value, timeseries = self.data(time())
         result, ensemble, datapoint = algorithms.run_selected_algorithm(timeseries, "test.metric")
         self.assertTrue(result)
         self.assertTrue(len(filter(None, ensemble)) >= settings.CONSENSUS)
@@ -85,7 +85,7 @@ class TestAlgorithms(unittest.TestCase):
         """
         algorithmsListMock.__iter__.return_value = ['alwaysTrue']
         consensusMock=1
-        timeMock.return_value, timeseries = self.data(time.time())
+        timeMock.return_value, timeseries = self.data(time())
         
         alwaysTrue = Mock(return_value=True)
         with patch.dict(algorithms.__dict__, {'alwaysTrue': alwaysTrue}):

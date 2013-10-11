@@ -1,9 +1,10 @@
 import logging
-import time
 import sys
+import traceback
 from os import getpid
 from os.path import dirname, abspath, isdir
 from daemon import runner
+from time import sleep, time
 
 # add the shared settings file to namespace
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
@@ -24,7 +25,7 @@ class AnalyzerAgent():
         Analyzer(getpid()).start()
 
         while 1:
-            time.sleep(100)
+            sleep(100)
 
 if __name__ == "__main__":
     """
@@ -38,6 +39,18 @@ if __name__ == "__main__":
         print 'log directory does not exist at %s' % settings.LOG_PATH
         sys.exit(1)
 
+    # Make sure we can run all the algorithms
+    try:
+        from algorithms import *
+        timeseries = map(list, zip(map(float, range(int(time())-86400, int(time())+1)), [1]*86401))
+        ensemble = [globals()[algorithm](timeseries) for algorithm in settings.ALGORITHMS]
+    except KeyError as e:
+        print "Algorithm %s deprecated or not defined; check settings.ALGORITHMS" % e
+        sys.exit(1)
+    except Exception as e:
+        print "Algorithm test run failed."
+        traceback.print_exc()
+        sys.exit(1)
 
     analyzer = AnalyzerAgent()
 

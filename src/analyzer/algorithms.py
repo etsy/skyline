@@ -100,7 +100,7 @@ def first_hour_average(timeseries):
 
     return abs(t - mean) > 3 * stdDev
 
-def simple_stddev_from_moving_average(timeseries):
+def stddev_from_average(timeseries):
     """
     A timeseries is anomalous if the absolute value of the average of the latest
     three datapoint minus the moving average is greater than one standard
