@@ -15,12 +15,13 @@ class Worker(Process):
     The worker processes chunks from the queue and appends
     the latest datapoints to their respective timesteps in Redis.
     """
-    def __init__(self, queue, parent_pid):
+    def __init__(self, queue, parent_pid, canary=False):
         super(Worker, self).__init__()
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
         self.q = queue
         self.parent_pid = parent_pid
         self.daemon = True
+        self.canary = canary
 
     def check_if_parent_is_alive(self):
         """
@@ -95,9 +96,10 @@ class Worker(Process):
 
                 # Log progress
                 logger.info('queue size at %d' % self.q.qsize())
-                if settings.GRAPHITE_HOST != '':
-                    host = settings.GRAPHITE_HOST.replace('http://', '')
-                    system("echo skyline.horizon.queue_size %i %i | nc -w 3 %s 2003" % (self.q.qsize(), now, host))
+
+                if self.canary and settings.GRAPHITE_HOST != '':
+                        host = settings.GRAPHITE_HOST.replace('http://', '')
+                        system("echo skyline.horizon.queue_size %i %i | nc -w 3 %s 2003" % (self.q.qsize(), now, host))
 
             except Empty:
                 logger.info('worker queue is empty and timed out')

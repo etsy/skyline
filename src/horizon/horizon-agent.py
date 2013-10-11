@@ -31,7 +31,10 @@ class Horizon():
 
         # Start the workers
         for i in range(settings.WORKER_PROCESSES):
-            Worker(listen_queue, pid).start()
+            if i == 0:
+                Worker(listen_queue, pid, canary=True).start()
+            else:
+                Worker(listen_queue, pid).start()
 
         # Start the listeners
         Listen(settings.PICKLE_PORT, listen_queue, pid, type="pickle").start()
@@ -66,7 +69,7 @@ if __name__ == "__main__":
 
     logger = logging.getLogger("HorizonLog")
     logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s :: %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+    formatter = logging.Formatter("%(asctime)s :: %(process)s :: %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
     handler = logging.FileHandler(settings.LOG_PATH + '/horizon.log')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
