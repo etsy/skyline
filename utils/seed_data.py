@@ -1,18 +1,23 @@
 #!/usr/bin/env python
 import redis
 import msgpack
+import os
 import sys
 import json
 import socket
 import time
 import pickle
 from struct import Struct, pack
-from os.path import dirname, abspath
+from os.path import dirname, abspath, join, realpath
 from multiprocessing import Process, Manager, log_to_stderr
 
 # add the shared settings file to namespace
 sys.path.insert(0, ''.join((dirname(dirname(abspath(__file__))), "/src" )))
 import settings
+
+# Get the current working directory of this file.
+# http://stackoverflow.com/a/4060259/120999
+__location__ = realpath(join(os.getcwd(), dirname(__file__)))
 
 if __name__ == "__main__":
     print "Connecting to Redis..."
@@ -23,7 +28,7 @@ if __name__ == "__main__":
     metric = 'horizon.test.udp'
     initial = int(time.time()) - settings.MAX_RESOLUTION
 
-    with open('data.json', 'r') as f:
+    with open(join(__location__, 'data.json'), 'r') as f:
       data = json.loads(f.read())
       series = data['results']
       sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
