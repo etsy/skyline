@@ -25,10 +25,6 @@ class NoDataException(Exception):
    pass
 
 def seed():
-    print "Connecting to Redis..."
-    r = redis.StrictRedis(unix_socket_path=settings.REDIS_SOCKET_PATH)
-    time.sleep(5)
-
     print 'Loading data over UDP via Horizon...'
     metric = 'horizon.test.udp'
     initial = int(time.time()) - settings.MAX_RESOLUTION
@@ -44,6 +40,8 @@ def seed():
         packet = msgpack.packb((metric, datapoint))
         sock.sendto(packet, (socket.gethostname(), settings.UDP_PORT))
 
+    print "Connecting to Redis..."
+    r = redis.StrictRedis(unix_socket_path=settings.REDIS_SOCKET_PATH)
     time.sleep(5)
 
     try:
