@@ -21,6 +21,9 @@ __location__ = realpath(join(os.getcwd(), dirname(__file__)))
 sys.path.insert(0, join(__location__, '..', 'src'))
 import settings
 
+class NoDataException(Exception):
+   pass
+
 def seed():
     print "Connecting to Redis..."
     r = redis.StrictRedis(unix_socket_path=settings.REDIS_SOCKET_PATH)
@@ -42,22 +45,23 @@ def seed():
         sock.sendto(packet, (socket.gethostname(), settings.UDP_PORT))
 
     time.sleep(5)
+
     try:
         x = r.smembers('metrics.unique_metrics')
         if x == None:
-        	raise Exception
+           raise NoDataException
         x = r.smembers('mini.unique_metrics')
         if x == None:
-        	raise Exception
+           raise NoDataException
         x = r.get('metrics.horizon.test.udp')
         if x == None:
-        	raise Exception
+           raise NoDataException
         x = r.get('mini.horizon.test.udp')
         if x == None:
-        	raise Exception
+           raise NoDataException
 
         print "Congratulations! The data made it in. The Horizon pipeline seems to be working."
-    except:
+    except NoDataException:
         print "Woops, looks like the metrics didn't make it into Horizon. Try again?"
 
 if __name__ == "__main__":
