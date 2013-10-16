@@ -29,19 +29,25 @@ class Horizon():
         listen_queue = Queue(maxsize=settings.MAX_QUEUE_SIZE)
         pid = getpid()
 
+        #If we're not using oculus, don't bother writing to mini
+        try:
+          skip_mini = True if settings.OCULUS_HOST == '' else False
+        except Exception:
+          skip_mini = True
+
         # Start the workers
         for i in range(settings.WORKER_PROCESSES):
             if i == 0:
-                Worker(listen_queue, pid, canary=True).start()
+                Worker(listen_queue, pid, skip_mini, canary=True).start()
             else:
-                Worker(listen_queue, pid).start()
+                Worker(listen_queue, pid, skip_mini).start()
 
         # Start the listeners
         Listen(settings.PICKLE_PORT, listen_queue, pid, type="pickle").start()
         Listen(settings.UDP_PORT, listen_queue, pid, type="udp").start()
 
         # Start the roomba
-        Roomba(pid).start()
+        Roomba(pid, skip_mini).start()
 
         # Warn the Mac users
         try:

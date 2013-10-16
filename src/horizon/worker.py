@@ -15,13 +15,14 @@ class Worker(Process):
     The worker processes chunks from the queue and appends
     the latest datapoints to their respective timesteps in Redis.
     """
-    def __init__(self, queue, parent_pid, canary=False):
+    def __init__(self, queue, parent_pid, skip_mini, canary=False):
         super(Worker, self).__init__()
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
         self.q = queue
         self.parent_pid = parent_pid
         self.daemon = True
         self.canary = canary
+        self.skip_mini = skip_mini
 
     def check_if_parent_is_alive(self):
         """
@@ -55,13 +56,6 @@ class Worker(Process):
         mini_uniques = MINI_NAMESPACE + 'unique_metrics'
         pipe = self.redis_conn.pipeline()
 
-        #If we're not using oculus, don't bother writing to mini
-        try:
-          skip_mini = True if settings.OCULUS_HOST == '' else False
-        except Exception:
-          skip_mini = True
-
-
         while 1:
 
             # Make sure Redis is up
@@ -94,7 +88,7 @@ class Worker(Process):
                     pipe.append(key, packb(metric[1]))
                     pipe.sadd(full_uniques, key)
                     
-                    if not skip_mini:
+                    if not self.skip_mini:
                       # Append to mini namespace
                       mini_key = ''.join((MINI_NAMESPACE, metric[0]))
                       pipe.append(mini_key, packb(metric[1]))

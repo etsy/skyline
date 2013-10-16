@@ -21,8 +21,9 @@ var handle_data = function(data) {
         // Add a space after the metric name to make each unique
         to_append = "<div class='sub'><a target='_blank' href='" + src + "'><div class='name'>" + name + " </div></a>&nbsp;&nbsp;"
         if (OCULUS_HOST != ''){
-          to_append += "<a class='oculus' target='_blank' href=" + OCULUS_HOST + "/search?p_slop=20&dtw_radius=5&search_type=FastDTW&query=" + name + "&page=&filters=><i class='icon-share-alt'></i></a><div class='count'>" + parseInt(metric[0]) + "</div>";
+          to_append += "<a class='oculus' target='_blank' href=" + OCULUS_HOST + "/search?p_slop=20&dtw_radius=5&search_type=FastDTW&query=" + name + "&page=&filters=><i class='icon-share-alt'></i></a>";
         }
+        to_append += "<div class='count'>" + parseInt(metric[0]) + "</div>";
         $('#metrics_listings').append(to_append);
     }
 

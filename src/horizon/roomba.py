@@ -16,11 +16,12 @@ class Roomba(Thread):
     """
     The Roomba is responsible for deleting keys older than DURATION.
     """
-    def __init__(self, parent_pid):
+    def __init__(self, parent_pid, skip_mini):
         super(Roomba, self).__init__()
         self.redis_conn = StrictRedis(unix_socket_path = settings.REDIS_SOCKET_PATH)
         self.daemon = True
         self.parent_pid = parent_pid
+        self.skip_mini = skip_mini
 
     def check_if_parent_is_alive(self):
         """
@@ -165,9 +166,11 @@ class Roomba(Thread):
             # Spawn processes
             pids = []
             for i in range(1, settings.ROOMBA_PROCESSES + 1):
-                p = Process(target=self.vacuum, args=(i, settings.MINI_NAMESPACE, settings.MINI_DURATION + settings.ROOMBA_GRACE_TIME))
-                pids.append(p)
-                p.start()
+                if not self.skip_mini:
+                  p = Process(target=self.vacuum, args=(i, settings.MINI_NAMESPACE, settings.MINI_DURATION + settings.ROOMBA_GRACE_TIME))
+                  pids.append(p)
+                  p.start()
+
                 p = Process(target=self.vacuum, args=(i, settings.FULL_NAMESPACE, settings.FULL_DURATION + settings.ROOMBA_GRACE_TIME))
                 pids.append(p)
                 p.start()
