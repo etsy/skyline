@@ -47,7 +47,7 @@ var handle_interaction = function() {
     $('.sub').removeClass('selected');
     $('.sub:contains(' + selected + ')').addClass('selected');
 
-    anomalous_datapoint = parseInt($($('.selected').children()[2]).text())
+    anomalous_datapoint = parseInt($($('.selected').children('.count')).text())
  
     $.get("/api?metric=" + FULL_NAMESPACE + "" + selected, function(d){
         big_data = JSON.parse(d)['results'];
