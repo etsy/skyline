@@ -27,6 +27,7 @@ class NoDataException(Exception):
 def seed():
     print 'Loading data over UDP via Horizon...'
     metric = 'horizon.test.udp'
+    metric_set = 'unique_metrics'
     initial = int(time.time()) - settings.MAX_RESOLUTION
 
     with open(join(__location__, 'data.json'), 'r') as f:
@@ -45,18 +46,20 @@ def seed():
     time.sleep(5)
 
     try:
-        x = r.smembers('metrics.unique_metrics')
+        x = r.smembers(settings.FULL_NAMESPACE + metric_set)
         if x == None:
            raise NoDataException
-        x = r.smembers('mini.unique_metrics')
+        x = r.get(settings.FULL_NAMESPACE + metric)
         if x == None:
            raise NoDataException
-        x = r.get('metrics.horizon.test.udp')
-        if x == None:
-           raise NoDataException
-        x = r.get('mini.horizon.test.udp')
-        if x == None:
-           raise NoDataException
+        #Ignore the mini namespace if OCULUS_HOST isn't set.
+        if settings.OCULUS_HOST != "":
+          x = r.smembers(settings.MINI_NAMESPACE + metric_set)
+          if x == None:
+             raise NoDataException           
+          x = r.get(settings.MINI_NAMESPACE + metric)
+          if x == None:
+             raise NoDataException
 
         print "Congratulations! The data made it in. The Horizon pipeline seems to be working."
     except NoDataException:
