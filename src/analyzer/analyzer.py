@@ -1,9 +1,10 @@
 import logging
+from Queue import Empty
 from redis import StrictRedis
 from time import time, sleep
 from threading import Thread
 from collections import defaultdict
-from multiprocessing import Process, Manager, Lock
+from multiprocessing import Process, Manager, Queue
 from msgpack import Unpacker, unpackb, packb
 from os import path, kill, getpid, system
 from math import ceil
@@ -27,10 +28,12 @@ class Analyzer(Thread):
         self.daemon = True
         self.parent_pid = parent_pid
         self.current_pid = getpid()
-        self.lock = Lock()
-        self.exceptions = Manager().dict()
-        self.anomaly_breakdown = Manager().dict()
+        self.exceptions = dict()
+        self.anomaly_breakdown = dict()
         self.anomalous_metrics = Manager().list()
+        self.exceptions_q = Queue()
+        self.anomaly_breakdown_q = Queue()
+
 
     def check_if_parent_is_alive(self):
         """
@@ -108,20 +111,12 @@ class Analyzer(Thread):
                 exceptions['Other'] += 1
                 logger.info(traceback.format_exc())
 
-        # Collate process-specific dicts to main dicts
-        with self.lock:
-            for key, value in anomaly_breakdown.items():
-                if key not in self.anomaly_breakdown:
-                    self.anomaly_breakdown[key] = value
-                else:
-        	        self.anomaly_breakdown[key] += value
+        # Add values to the queue so the parent process can collate
+        for key, value in anomaly_breakdown.items():
+            self.anomaly_breakdown_q.put((key, value))
 
-            for key, value in exceptions.items():
-                if key not in self.exceptions:
-                    self.exceptions[key] = value
-                else:
-        	        self.exceptions[key] += value
-
+        for key, value in exceptions.items():
+            self.exceptions_q.put((key, value))
 
 
     def run(self):
@@ -162,6 +157,30 @@ class Analyzer(Thread):
             # Send wait signal to zombie processes
             for p in pids:
                 p.join()
+
+            # Grab data from the queue and populate dictionaries
+            logger.info('Getting anomalies...')
+            while 1:
+              try:
+                key, value = self.anomaly_breakdown_q.get_nowait()
+                if key not in self.anomaly_breakdown.keys():
+                  self.anomaly_breakdown[key] = value
+                else:
+                  self.anomaly_breakdown[key] += value
+              except Empty:
+                break
+
+            logger.info('Getting exceptions...')
+            while 1:
+              try:
+                key, value = self.exceptions_q.get_nowait()
+                if key not in self.exceptions.keys():
+                  self.exceptions[key] = value
+                else:
+                  self.exceptions[key] += value
+              except Empty:
+                break
+
 
             # Send alerts
             if settings.ENABLE_ALERTS:
@@ -218,8 +237,8 @@ class Analyzer(Thread):
 
             # Reset counters
             self.anomalous_metrics[:] = []
-            self.exceptions = Manager().dict()
-            self.anomaly_breakdown = Manager().dict()
+            self.exceptions = dict()
+            self.anomaly_breakdown = dict()
 
             # Sleep if it went too fast
             if time() - now < 5:
