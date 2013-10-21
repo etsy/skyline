@@ -22,7 +22,7 @@ sys.path.insert(0, join(__location__, '..', 'src'))
 import settings
 
 class NoDataException(Exception):
-   pass
+    pass
 
 def seed():
     print 'Loading data over UDP via Horizon...'
@@ -31,15 +31,15 @@ def seed():
     initial = int(time.time()) - settings.MAX_RESOLUTION
 
     with open(join(__location__, 'data.json'), 'r') as f:
-      data = json.loads(f.read())
-      series = data['results']
-      sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        data = json.loads(f.read())
+        series = data['results']
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-      for datapoint in series:
-        datapoint[0] = initial
-        initial += 1
-        packet = msgpack.packb((metric, datapoint))
-        sock.sendto(packet, (socket.gethostname(), settings.UDP_PORT))
+        for datapoint in series:
+            datapoint[0] = initial
+            initial += 1
+            packet = msgpack.packb((metric, datapoint))
+            sock.sendto(packet, (socket.gethostname(), settings.UDP_PORT))
 
     print "Connecting to Redis..."
     r = redis.StrictRedis(unix_socket_path=settings.REDIS_SOCKET_PATH)
@@ -49,19 +49,23 @@ def seed():
         x = r.smembers(settings.FULL_NAMESPACE + metric_set)
         if x == None:
            raise NoDataException
+
         x = r.get(settings.FULL_NAMESPACE + metric)
         if x == None:
-           raise NoDataException
+            raise NoDataException
+
         #Ignore the mini namespace if OCULUS_HOST isn't set.
         if settings.OCULUS_HOST != "":
-          x = r.smembers(settings.MINI_NAMESPACE + metric_set)
-          if x == None:
-             raise NoDataException           
-          x = r.get(settings.MINI_NAMESPACE + metric)
-          if x == None:
-             raise NoDataException
+            x = r.smembers(settings.MINI_NAMESPACE + metric_set)
+            if x == None:
+                raise NoDataException
+
+            x = r.get(settings.MINI_NAMESPACE + metric)
+            if x == None:
+                raise NoDataException
 
         print "Congratulations! The data made it in. The Horizon pipeline seems to be working."
+
     except NoDataException:
         print "Woops, looks like the metrics didn't make it into Horizon. Try again?"
 
