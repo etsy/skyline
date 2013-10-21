@@ -23,7 +23,7 @@ from settings import (
 from algorithm_exceptions import *
 
 logger = logging.getLogger("AnalyzerLog")
-redis_conn = StrictRedis(unix_socket_path = REDIS_SOCKET_PATH)
+redis_conn = StrictRedis(unix_socket_path=REDIS_SOCKET_PATH)
 
 """
 This is no man's land. Do anything you want in here,
@@ -32,6 +32,7 @@ timeseries is anomalous or not.
 
 To add an algorithm, define it here, and add its name to settings.ALGORITHMS.
 """
+
 
 def tail_avg(timeseries):
     """
@@ -45,6 +46,7 @@ def tail_avg(timeseries):
         return t
     except IndexError:
         return timeseries[-1][1]
+
 
 def median_absolute_deviation(timeseries):
     """
@@ -69,6 +71,7 @@ def median_absolute_deviation(timeseries):
     if test_statistic > 6:
         return True
 
+
 def grubbs(timeseries):
     """
     A timeseries is anomalous if the Z score is greater than the Grubb's score.
@@ -80,11 +83,12 @@ def grubbs(timeseries):
     tail_average = tail_avg(timeseries)
     z_score = (tail_average - mean) / stdDev
     len_series = len(series)
-    threshold = scipy.stats.t.isf(.05 / (2 * len_series) , len_series - 2)
+    threshold = scipy.stats.t.isf(.05 / (2 * len_series), len_series - 2)
     threshold_squared = threshold * threshold
     grubbs_score = ((len_series - 1) / np.sqrt(len_series)) * np.sqrt(threshold_squared / (len_series - 2 + threshold_squared))
 
     return z_score > grubbs_score
+
 
 def first_hour_average(timeseries):
     """
@@ -100,6 +104,7 @@ def first_hour_average(timeseries):
 
     return abs(t - mean) > 3 * stdDev
 
+
 def stddev_from_average(timeseries):
     """
     A timeseries is anomalous if the absolute value of the average of the latest
@@ -114,6 +119,7 @@ def stddev_from_average(timeseries):
 
     return abs(t - mean) > 3 * stdDev
 
+
 def stddev_from_moving_average(timeseries):
     """
     A timeseries is anomalous if the absolute value of the average of the latest
@@ -126,6 +132,7 @@ def stddev_from_moving_average(timeseries):
     stdDev = pandas.stats.moments.ewmstd(series, com=50)
 
     return abs(series.iget(-1) - expAverage.iget(-1)) > 3 * stdDev.iget(-1)
+
 
 def mean_subtraction_cumulation(timeseries):
     """
@@ -141,6 +148,7 @@ def mean_subtraction_cumulation(timeseries):
 
     return abs(series.iget(-1)) > 3 * stdDev
 
+
 def least_squares(timeseries):
     """
     A timeseries is anomalous if the average of the last three datapoints
@@ -155,17 +163,18 @@ def least_squares(timeseries):
     m, c = np.linalg.lstsq(A, y)[0]
     errors = []
     for i, value in enumerate(y):
-    	projected = m * x[i] + c
-    	error = value - projected
-    	errors.append(error)
+        projected = m * x[i] + c
+        error = value - projected
+        errors.append(error)
 
     if len(errors) < 3:
-    	return False
+        return False
 
     std_dev = scipy.std(errors)
     t = (errors[-1] + errors[-2] + errors[-3]) / 3
 
     return abs(t) > std_dev * 3 and round(std_dev) != 0 and round(t) != 0
+
 
 def histogram_bins(timeseries):
     """
@@ -193,6 +202,7 @@ def histogram_bins(timeseries):
 
     return False
 
+
 def ks_test(timeseries):
     """
     A timeseries is anomalous if 2 sample Kolmogorov-Smirnov test indicates
@@ -209,18 +219,19 @@ def ks_test(timeseries):
     if reference.size < 20 or probe.size < 20:
         return False
 
-    ks_d,ks_p_value = scipy.stats.ks_2samp(reference, probe)
+    ks_d, ks_p_value = scipy.stats.ks_2samp(reference, probe)
 
     if ks_p_value < 0.05 and ks_d > 0.5:
         adf = sm.tsa.stattools.adfuller(reference, 10)
-        if  adf[1] < 0.05:
+        if adf[1] < 0.05:
             return True
 
     return False
 
+
 def is_anomalously_anomalous(metric_name, ensemble, datapoint):
     """
-    This method runs a meta-analysis on the metric to determine whether the 
+    This method runs a meta-analysis on the metric to determine whether the
     metric has a past history of triggering. TODO: weight intervals based on datapoint
     """
     # We want the datapoint to avoid triggering twice on the same data
@@ -236,8 +247,8 @@ def is_anomalously_anomalous(metric_name, ensemble, datapoint):
 
     # Are we (probably) triggering on the same data?
     if (new_trigger[1] == trigger_history[-1][1] and
-    	new_trigger[0] - trigger_history[-1][0] <= 300):
-        return False
+            new_trigger[0] - trigger_history[-1][0] <= 300):
+                return False
 
     # Update the history
     trigger_history.append(new_trigger)
@@ -246,16 +257,17 @@ def is_anomalously_anomalous(metric_name, ensemble, datapoint):
     # Should we surface the anomaly?
     trigger_times = [x[0] for x in trigger_history]
     intervals = [
-                    trigger_times[i + 1] - trigger_times[i]
-                    for i, v in enumerate(trigger_times)
-                    if (i + 1) < len(trigger_times)
-                ]
+        trigger_times[i + 1] - trigger_times[i]
+        for i, v in enumerate(trigger_times)
+        if (i + 1) < len(trigger_times)
+    ]
 
     series = pandas.Series(intervals)
     mean = series.mean()
     stdDev = series.std()
 
     return abs(intervals[-1] - mean) > 3 * stdDev
+
 
 def run_selected_algorithm(timeseries, metric_name):
     """
@@ -283,7 +295,7 @@ def run_selected_algorithm(timeseries, metric_name):
         threshold = len(ensemble) - CONSENSUS
         if ensemble.count(False) <= threshold:
             if ENABLE_SECOND_ORDER:
-            	if is_anomalously_anomalous(metric_name, ensemble, timeseries[-1][1]):
+                if is_anomalously_anomalous(metric_name, ensemble, timeseries[-1][1]):
                     return True, ensemble, timeseries[-1][1]
             else:
                 return True, ensemble, timeseries[-1][1]

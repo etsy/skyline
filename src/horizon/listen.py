@@ -11,6 +11,7 @@ import settings
 
 logger = logging.getLogger("HorizonLog")
 
+
 class Listen(Process):
     """
     The listener is responsible for listening on a port.
@@ -31,7 +32,7 @@ class Listen(Process):
 
     def gen_unpickle(self, infile):
         """
-        Generate a pickle from a stream 
+        Generate a pickle from a stream
         """
         try:
             bunch = loads(infile)
@@ -47,7 +48,7 @@ class Listen(Process):
         while n > 0:
             buf = sock.recv(n)
             n -= len(buf)
-            data += buf 
+            data += buf
         return data
 
     def check_if_parent_is_alive(self):
@@ -66,9 +67,9 @@ class Listen(Process):
         """
         while 1:
             try:
-                # Set up the TCP listening socket 
+                # Set up the TCP listening socket
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 s.bind((self.ip, self.port))
                 s.setblocking(1)
                 s.listen(5)
@@ -76,12 +77,12 @@ class Listen(Process):
 
                 (conn, address) = s.accept()
                 logger.info('connection from %s:%s' % (address[0], self.port))
-        
+
                 chunk = []
                 while 1:
                     self.check_if_parent_is_alive()
                     try:
-                        length = Struct('!I').unpack(self.read_all(conn, 4)) 
+                        length = Struct('!I').unpack(self.read_all(conn, 4))
                         body = self.read_all(conn, length[0])
 
                         # Iterate and chunk each individual datapoint
@@ -148,7 +149,7 @@ class Listen(Process):
         logger.info('started listener')
 
         if self.type == 'pickle':
-        	self.listen_pickle()
+            self.listen_pickle()
         elif self.type == 'udp':
             self.listen_udp()
         else:

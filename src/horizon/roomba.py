@@ -44,7 +44,7 @@ class Roomba(Thread):
         assigned_max = i * keys_per_processor
         assigned_min = assigned_max - keys_per_processor
         assigned_keys = range(assigned_min, assigned_max)
- 
+
         # Compile assigned metrics
         assigned_metrics = [unique_metrics[index] for index in assigned_keys]
 
@@ -61,13 +61,13 @@ class Roomba(Thread):
                 # WATCH the key
                 pipe.watch(key)
 
-                # Everything below NEEDS to happen before another datapoint 
-                # comes in. If your data has a very small resolution (<.1s), 
+                # Everything below NEEDS to happen before another datapoint
+                # comes in. If your data has a very small resolution (<.1s),
                 # this technique may not suit you.
                 raw_series = pipe.get(key)
                 unpacker = Unpacker(use_list = False)
                 unpacker.feed(raw_series)
-                timeseries = sorted([ unpacked for unpacked in unpacker ])
+                timeseries = sorted([unpacked for unpacked in unpacker])
 
                 # Put pipe back in multi mode
                 pipe.multi()
@@ -96,12 +96,12 @@ class Roomba(Thread):
                 temp = set()
                 temp_add = temp.add
                 delta = now - duration
-                trimmed = [ 
-                            tuple for tuple in timeseries 
-                            if tuple[0] > delta 
-                            and tuple[0] not in temp 
-                            and not temp_add(tuple[0])
-                        ]
+                trimmed = [
+                    tuple for tuple in timeseries
+                    if tuple[0] > delta
+                    and tuple[0] not in temp
+                    and not temp_add(tuple[0])
+                ]
 
                 # Purge if everything was deleted, set key otherwise
                 if len(trimmed) > 0:
@@ -110,7 +110,7 @@ class Roomba(Thread):
                     if len(trimmed) <= 15:
                         value = btrimmed[1:]
                     elif len(trimmed) <= 65535:
-                        value = btrimmed[3:] 
+                        value = btrimmed[3:]
                     else:
                         value = btrimmed[5:]
                     pipe.set(key, value)
@@ -136,7 +136,7 @@ class Roomba(Thread):
                 pipe.reset()
 
         logger.info('operated on %s in %f seconds' % (namespace, time() - begin))
-        logger.info('%s keyspace is %d' % (namespace , (len(assigned_metrics) - euthanized)))
+        logger.info('%s keyspace is %d' % (namespace, (len(assigned_metrics) - euthanized)))
         logger.info('blocked %d times' % blocked)
         logger.info('euthanized %d geriatric keys' % euthanized)
 
@@ -175,4 +175,3 @@ class Roomba(Thread):
             # Send wait signal to zombie processes
             for p in pids:
                 p.join()
-

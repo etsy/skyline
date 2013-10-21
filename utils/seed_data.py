@@ -21,8 +21,10 @@ __location__ = realpath(join(os.getcwd(), dirname(__file__)))
 sys.path.insert(0, join(__location__, '..', 'src'))
 import settings
 
+
 class NoDataException(Exception):
     pass
+
 
 def seed():
     print 'Loading data over UDP via Horizon...'
@@ -47,21 +49,21 @@ def seed():
 
     try:
         x = r.smembers(settings.FULL_NAMESPACE + metric_set)
-        if x == None:
-           raise NoDataException
+        if x is None:
+            raise NoDataException
 
         x = r.get(settings.FULL_NAMESPACE + metric)
-        if x == None:
+        if x is None:
             raise NoDataException
 
         #Ignore the mini namespace if OCULUS_HOST isn't set.
         if settings.OCULUS_HOST != "":
             x = r.smembers(settings.MINI_NAMESPACE + metric_set)
-            if x == None:
+            if x is None:
                 raise NoDataException
 
             x = r.get(settings.MINI_NAMESPACE + metric)
-            if x == None:
+            if x is None:
                 raise NoDataException
 
         print "Congratulations! The data made it in. The Horizon pipeline seems to be working."
@@ -70,4 +72,4 @@ def seed():
         print "Woops, looks like the metrics didn't make it into Horizon. Try again?"
 
 if __name__ == "__main__":
-   seed()
+    seed()

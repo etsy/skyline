@@ -5,10 +5,11 @@ import time
 from os.path import dirname, abspath
 
 # add the shared settings file to namespace
-sys.path.insert(0, ''.join((dirname(dirname(abspath(__file__))), "/src" )))
+sys.path.insert(0, ''.join((dirname(dirname(abspath(__file__))), "/src")))
 import settings
 
 metric = 'horizon.test.udp'
+
 
 def check_continuity(metric, mini = False):
     r = redis.StrictRedis(unix_socket_path=settings.REDIS_SOCKET_PATH)
@@ -40,8 +41,8 @@ def check_continuity(metric, mini = False):
             bad += 1
             missing += int(item[0]) - last
         last = item[0]
-   
-    total_sum = sum(item[1] for item in timeseries[-50:])   
+
+    total_sum = sum(item[1] for item in timeseries[-50:])
 
     return length, total_sum, start, end, duration, bad, missing
 

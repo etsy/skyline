@@ -10,6 +10,7 @@ import settings
 
 logger = logging.getLogger("HorizonLog")
 
+
 class Worker(Process):
     """
     The worker processes chunks from the queue and appends
@@ -39,7 +40,7 @@ class Worker(Process):
         for to_skip in settings.SKIP_LIST:
             if to_skip in metric_name:
                 return True
-        
+
         return False
 
     def run(self):
@@ -86,7 +87,7 @@ class Worker(Process):
                     key = ''.join((FULL_NAMESPACE, metric[0]))
                     pipe.append(key, packb(metric[1]))
                     pipe.sadd(full_uniques, key)
-                    
+
                     # Append to mini namespace
                     mini_key = ''.join((MINI_NAMESPACE, metric[0]))
                     pipe.append(mini_key, packb(metric[1]))
@@ -109,4 +110,3 @@ class Worker(Process):
                 pass
             except Exception as e:
                 logger.error("worker error: " + str(e))
-

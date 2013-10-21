@@ -2,7 +2,8 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEImage import MIMEImage
 from smtplib import SMTP
-import alerters, settings
+import alerters
+import settings
 
 
 """
@@ -17,6 +18,7 @@ metric: information about the anomaly itself
     metric[0]: the anomalous value
     metric[1]: The full name of the anomalous metric
 """
+
 
 def alert_smtp(alert, metric):
 
@@ -39,19 +41,22 @@ def alert_smtp(alert, metric):
     s.sendmail(sender, recipient, msg.as_string())
     s.quit()
 
+
 def alert_pagerduty(alert, metric):
     import pygerduty
     pager = pygerduty.PagerDuty(settings.PAGERDUTY_OPTS['subdomain'], settings.PAGERDUTY_OPTS['auth_token'])
     pager.trigger_incident(settings.PAGERDUTY_OPTS['key'], "Anomalous metric: %s (value: %s)" % (metric[1], metric[0]))
 
+
 def alert_hipchat(alert, metric):
     import hipchat
-    hipster = hipchat.HipChat(token = settings.HIPCHAT_OPTS['auth_token'])
+    hipster = hipchat.HipChat(token=settings.HIPCHAT_OPTS['auth_token'])
     rooms = settings.HIPCHAT_OPTS['rooms'][alert[0]]
     link = '%s/render/?width=588&height=308&target=%s' % (settings.GRAPHITE_HOST, metric[1])
 
     for room in rooms:
         hipster.method('rooms/message', method='POST', parameters={'room_id': room, 'from': 'Skyline', 'color': settings.HIPCHAT_OPTS['color'], 'message': 'Anomaly: <a href="%s">%s</a> : %s' % (link, metric[1], metric[0])})
+
 
 def trigger_alert(alert, metric):
 

@@ -46,4 +46,3 @@ if alerts_enabled:
             print '    Testing against "' + alert[0] + '" to send via ' + alert[1] + "..."
 else:
     print 'Alerts are disabled'
-
