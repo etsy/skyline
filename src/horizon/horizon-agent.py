@@ -16,6 +16,7 @@ from worker import Worker
 
 # TODO: http://stackoverflow.com/questions/6728236/exception-thrown-in-multiprocessing-pool-not-detected
 
+
 class Horizon():
     def __init__(self):
         self.stdin_path = '/dev/null'
@@ -84,5 +85,5 @@ if __name__ == "__main__":
         horizon.run()
     else:
         daemon_runner = runner.DaemonRunner(horizon)
-        daemon_runner.daemon_context.files_preserve=[handler.stream]
+        daemon_runner.daemon_context.files_preserve = [handler.stream]
         daemon_runner.do_action()

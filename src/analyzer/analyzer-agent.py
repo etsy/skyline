@@ -12,6 +12,7 @@ import settings
 
 from analyzer import Analyzer
 
+
 class AnalyzerAgent():
     def __init__(self):
         self.stdin_path = '/dev/null'
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     # Make sure we can run all the algorithms
     try:
         from algorithms import *
-        timeseries = map(list, zip(map(float, range(int(time())-86400, int(time())+1)), [1]*86401))
+        timeseries = map(list, zip(map(float, range(int(time()) - 86400, int(time()) + 1)), [1] * 86401))
         ensemble = [globals()[algorithm](timeseries) for algorithm in settings.ALGORITHMS]
     except KeyError as e:
         print "Algorithm %s deprecated or not defined; check settings.ALGORITHMS" % e
@@ -65,5 +66,5 @@ if __name__ == "__main__":
         analyzer.run()
     else:
         daemon_runner = runner.DaemonRunner(analyzer)
-        daemon_runner.daemon_context.files_preserve=[handler.stream]
+        daemon_runner.daemon_context.files_preserve = [handler.stream]
         daemon_runner.do_action()

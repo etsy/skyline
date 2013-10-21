@@ -18,6 +18,7 @@ from algorithm_exceptions import *
 
 logger = logging.getLogger("AnalyzerLog")
 
+
 class Analyzer(Thread):
     def __init__(self, parent_pid):
         """
@@ -31,7 +32,6 @@ class Analyzer(Thread):
         self.anomalous_metrics = Manager().list()
         self.exceptions_q = Queue()
         self.anomaly_breakdown_q = Queue()
-
 
     def check_if_parent_is_alive(self):
         """
@@ -116,7 +116,6 @@ class Analyzer(Thread):
         for key, value in exceptions.items():
             self.exceptions_q.put((key, value))
 
-
     def run(self):
         """
         Called when the process intializes.
@@ -179,7 +178,6 @@ class Analyzer(Thread):
                 except Empty:
                     break
 
-
             # Send alerts
             if settings.ENABLE_ALERTS:
                 for alert in settings.ALERTS:
@@ -196,7 +194,7 @@ class Analyzer(Thread):
                                 logger.error("couldn't send alert: %s" % e)
 
             # Write anomalous_metrics to static webapp directory
-            filename = path.abspath(path.join(path.dirname( __file__ ), '..', settings.ANOMALY_DUMP))
+            filename = path.abspath(path.join(path.dirname(__file__), '..', settings.ANOMALY_DUMP))
             with open(filename, 'w') as fh:
                 # Make it JSONP with a handle_data() function
                 anomalous_metrics = list(self.anomalous_metrics)
@@ -232,7 +230,6 @@ class Analyzer(Thread):
                     system('echo skyline.analyzer.duration %.2f %s | nc -w 3 %s 2003' % (time_human, now, host))
                     system('echo skyline.analyzer.projected %.2f %s | nc -w 3 %s 2003' % (projected, now, host))
 
-
             # Reset counters
             self.anomalous_metrics[:] = []
 
@@ -240,4 +237,3 @@ class Analyzer(Thread):
             if time() - now < 5:
                 logger.info('sleeping due to low run time...')
                 sleep(10)
-
