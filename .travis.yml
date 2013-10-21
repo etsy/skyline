@@ -9,7 +9,9 @@ install:
   - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install patsy --use-mirrors
   - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH pip install msgpack_python --use-mirrors
   - cp src/settings.py.example src/settings.py
+  - pip install pep8 --use-mirrors
 script:
   - PYTHONPATH= PATH=/home/travis/anaconda/bin:$PATH nosetests -v --nocapture
+  - pep8 --exclude=migrations --ignore=E501,E251 ./ 
 notifications:
   email: false
