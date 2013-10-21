@@ -12,6 +12,7 @@ __location__ = realpath(join(os.getcwd(), dirname(__file__)))
 # Add the shared settings file to namespace.
 sys.path.insert(0, join(__location__, '..', 'src'))
 import settings
+
 # Add the analyzer file to namespace.
 sys.path.insert(0, join(__location__, '..', 'src', 'analyzer'))
 from alerters import trigger_alert
@@ -32,18 +33,17 @@ except:
     print "Exception: Check your settings file for the existence of ENABLE_ALERTS and ALERTS"
     sys.exit()
 
-print 'Verifying alerts for metric: "' + options.metric + '"'
+print 'Verifying alerts for: "' + options.metric + '"'
 
 # Send alerts
 if alerts_enabled:
-    print 'Alerts Enabled'
     for alert in alerts:
-        print 'Checking metric name contains: "' + alert[0] + '" to send via ' + alert[1]
         if alert[0] in options.metric:
-            print '...Trigger alert via ' + alert[1]
+            print '    Testing against "' + alert[0] + '" to send via ' + alert[1] + "...triggered"
             if options.trigger:
                 trigger_alert(alert, options.metric)
+        else:
+            print '    Testing against "' + alert[0] + '" to send via ' + alert[1] + "..."
 else:
-    print 'Alerts are Disabled'
-
+    print 'Alerts are disabled'
 
