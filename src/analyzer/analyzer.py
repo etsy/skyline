@@ -160,24 +160,24 @@ class Analyzer(Thread):
             exceptions = dict()
             anomaly_breakdown = dict()
             while 1:
-              try:
-                key, value = self.anomaly_breakdown_q.get_nowait()
-                if key not in anomaly_breakdown.keys():
-                  anomaly_breakdown[key] = value
-                else:
-                  anomaly_breakdown[key] += value
-              except Empty:
-                break
+                try:
+                    key, value = self.anomaly_breakdown_q.get_nowait()
+                    if key not in anomaly_breakdown.keys():
+                        anomaly_breakdown[key] = value
+                    else:
+                        anomaly_breakdown[key] += value
+                except Empty:
+                    break
 
             while 1:
-              try:
-                key, value = self.exceptions_q.get_nowait()
-                if key not in exceptions.keys():
-                  exceptions[key] = value
-                else:
-                  exceptions[key] += value
-              except Empty:
-                break
+                try:
+                    key, value = self.exceptions_q.get_nowait()
+                    if key not in exceptions.keys():
+                        exceptions[key] = value
+                    else:
+                        exceptions[key] += value
+                except Empty:
+                    break
 
 
             # Send alerts
