@@ -159,7 +159,6 @@ class Analyzer(Thread):
                 p.join()
 
             # Grab data from the queue and populate dictionaries
-            logger.info('Getting anomalies...')
             while 1:
               try:
                 key, value = self.anomaly_breakdown_q.get_nowait()
@@ -170,7 +169,6 @@ class Analyzer(Thread):
               except Empty:
                 break
 
-            logger.info('Getting exceptions...')
             while 1:
               try:
                 key, value = self.exceptions_q.get_nowait()
