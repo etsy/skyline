@@ -28,8 +28,6 @@ class Analyzer(Thread):
         self.daemon = True
         self.parent_pid = parent_pid
         self.current_pid = getpid()
-        self.exceptions = dict()
-        self.anomaly_breakdown = dict()
         self.anomalous_metrics = Manager().list()
         self.exceptions_q = Queue()
         self.anomaly_breakdown_q = Queue()
@@ -159,23 +157,25 @@ class Analyzer(Thread):
                 p.join()
 
             # Grab data from the queue and populate dictionaries
+            exceptions = dict()
+            anomaly_breakdown = dict()
             while 1:
               try:
                 key, value = self.anomaly_breakdown_q.get_nowait()
-                if key not in self.anomaly_breakdown.keys():
-                  self.anomaly_breakdown[key] = value
+                if key not in anomaly_breakdown.keys():
+                  anomaly_breakdown[key] = value
                 else:
-                  self.anomaly_breakdown[key] += value
+                  anomaly_breakdown[key] += value
               except Empty:
                 break
 
             while 1:
               try:
                 key, value = self.exceptions_q.get_nowait()
-                if key not in self.exceptions.keys():
-                  self.exceptions[key] = value
+                if key not in exceptions.keys():
+                  exceptions[key] = value
                 else:
-                  self.exceptions[key] += value
+                  exceptions[key] += value
               except Empty:
                 break
 
@@ -206,16 +206,16 @@ class Analyzer(Thread):
             # Log progress
             logger.info('seconds to run    :: %.2f' % (time() - now))
             logger.info('total metrics     :: %d' % len(unique_metrics))
-            logger.info('total analyzed    :: %d' % (len(unique_metrics) - sum(self.exceptions.values())))
+            logger.info('total analyzed    :: %d' % (len(unique_metrics) - sum(exceptions.values())))
             logger.info('total anomalies   :: %d' % len(self.anomalous_metrics))
-            logger.info('exception stats   :: %s' % self.exceptions)
-            logger.info('anomaly breakdown :: %s' % self.anomaly_breakdown)
+            logger.info('exception stats   :: %s' % exceptions)
+            logger.info('anomaly breakdown :: %s' % anomaly_breakdown)
 
             # Log to Graphite
             if settings.GRAPHITE_HOST != '':
                 host = settings.GRAPHITE_HOST.replace('http://', '')
                 system('echo skyline.analyzer.run_time %.2f %s | nc -w 3 %s 2003' % ((time() - now), now, host))
-                system('echo skyline.analyzer.total_analyzed %d %s | nc -w 3 %s 2003' % ((len(unique_metrics) - sum(self.exceptions.values())), now, host))
+                system('echo skyline.analyzer.total_analyzed %d %s | nc -w 3 %s 2003' % ((len(unique_metrics) - sum(exceptions.values())), now, host))
 
             # Check canary metric
             raw_series = self.redis_conn.get(settings.FULL_NAMESPACE + settings.CANARY_METRIC)
@@ -235,8 +235,6 @@ class Analyzer(Thread):
 
             # Reset counters
             self.anomalous_metrics[:] = []
-            self.exceptions = dict()
-            self.anomaly_breakdown = dict()
 
             # Sleep if it went too fast
             if time() - now < 5:
