@@ -33,7 +33,6 @@ class Analyzer(Thread):
         self.exceptions_q = Queue()
         self.anomaly_breakdown_q = Queue()
 
-
     def check_if_parent_is_alive(self):
         """
         Self explanatory
