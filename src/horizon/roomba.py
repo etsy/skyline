@@ -167,9 +167,9 @@ class Roomba(Thread):
             pids = []
             for i in range(1, settings.ROOMBA_PROCESSES + 1):
                 if not self.skip_mini:
-                  p = Process(target=self.vacuum, args=(i, settings.MINI_NAMESPACE, settings.MINI_DURATION + settings.ROOMBA_GRACE_TIME))
-                  pids.append(p)
-                  p.start()
+                    p = Process(target=self.vacuum, args=(i, settings.MINI_NAMESPACE, settings.MINI_DURATION + settings.ROOMBA_GRACE_TIME))
+                    pids.append(p)
+                    p.start()
 
                 p = Process(target=self.vacuum, args=(i, settings.FULL_NAMESPACE, settings.FULL_DURATION + settings.ROOMBA_GRACE_TIME))
                 pids.append(p)
@@ -178,4 +178,3 @@ class Roomba(Thread):
             # Send wait signal to zombie processes
             for p in pids:
                 p.join()
-

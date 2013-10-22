@@ -89,10 +89,10 @@ class Worker(Process):
                     pipe.sadd(full_uniques, key)
                     
                     if not self.skip_mini:
-                      # Append to mini namespace
-                      mini_key = ''.join((MINI_NAMESPACE, metric[0]))
-                      pipe.append(mini_key, packb(metric[1]))
-                      pipe.sadd(mini_uniques, mini_key)
+                        # Append to mini namespace
+                        mini_key = ''.join((MINI_NAMESPACE, metric[0]))
+                        pipe.append(mini_key, packb(metric[1]))
+                        pipe.sadd(mini_uniques, mini_key)
 
                     pipe.execute()
 
@@ -111,4 +111,3 @@ class Worker(Process):
                 pass
             except Exception as e:
                 logger.error("worker error: " + str(e))
-

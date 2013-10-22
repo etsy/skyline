@@ -31,9 +31,9 @@ class Horizon():
 
         #If we're not using oculus, don't bother writing to mini
         try:
-          skip_mini = True if settings.OCULUS_HOST == '' else False
+            skip_mini = True if settings.OCULUS_HOST == '' else False
         except Exception:
-          skip_mini = True
+            skip_mini = True
 
         # Start the workers
         for i in range(settings.WORKER_PROCESSES):
