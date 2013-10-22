@@ -99,6 +99,14 @@ See the rest of the
 [wiki](https://github.com/etsy/skyline/wiki)
 
 ### Contributions
+1. Clone your fork
+2. Hack away
+3. If you are adding new functionality, document it in the README or wiki
+4. If necessary, rebase your commits into logical chunks, without errors
+5. Verfiy your code by running the test suite and pep8, adding additional tests if able.
+6. Push the branch up to GitHub
+7. Send a pull request to the etsy/skyline project.
+
 We actively welcome contributions. If you don't know where to start, try
 checking out the [issue list](https://github.com/etsy/skyline/issues) and
 fixing up the place. Or, you can add an algorithm - a goal of this project
