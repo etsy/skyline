@@ -6,6 +6,7 @@ from msgpack import packb
 from time import time, sleep
 
 import logging
+import socket
 import settings
 
 logger = logging.getLogger("HorizonLog")
@@ -41,6 +42,16 @@ class Worker(Process):
         for to_skip in settings.SKIP_LIST:
             if to_skip in metric_name:
                 return True
+
+        return False
+
+    def send_graphite_metric(self, name, value):
+        if settings.GRAPHITE_HOST != '':
+            sock = socket.socket()
+            sock.connect((settings.GRAPHITE_HOST.replace('http://', ''), settings.GRAPHITE_PORT))
+            sock.sendall('%s %s %i\n' % (name, value, time()))
+            sock.close()
+            return True
 
         return False
 
@@ -100,9 +111,7 @@ class Worker(Process):
                 # Log progress
                 if self.canary:
                     logger.info('queue size at %d' % self.q.qsize())
-                    if settings.GRAPHITE_HOST != '':
-                        host = settings.GRAPHITE_HOST.replace('http://', '')
-                        system("echo skyline.horizon.queue_size %i %i | nc -w 3 %s 2003" % (self.q.qsize(), now, host))
+                    self.send_graphite_metric('skyline.horizon.queue_size', self.q.qsize())
 
             except Empty:
                 logger.info('worker queue is empty and timed out')

@@ -10,6 +10,7 @@ from os import path, kill, getpid, system
 from math import ceil
 import traceback
 import operator
+import socket
 import settings
 
 from alerters import trigger_alert
@@ -42,6 +43,16 @@ class Analyzer(Thread):
             kill(self.parent_pid, 0)
         except:
             exit(0)
+
+    def send_graphite_metric(self, name, value):
+        if settings.GRAPHITE_HOST != '':
+            sock = socket.socket()
+            sock.connect((settings.GRAPHITE_HOST.replace('http://', ''), settings.GRAPHITE_PORT))
+            sock.sendall('%s %s %i\n' % (name, value, time()))
+            sock.close()
+            return True
+
+        return False
 
     def spin_process(self, i, unique_metrics):
         """
@@ -210,10 +221,8 @@ class Analyzer(Thread):
             logger.info('anomaly breakdown :: %s' % anomaly_breakdown)
 
             # Log to Graphite
-            if settings.GRAPHITE_HOST != '':
-                host = settings.GRAPHITE_HOST.replace('http://', '')
-                system('echo skyline.analyzer.run_time %.2f %s | nc -w 3 %s 2003' % ((time() - now), now, host))
-                system('echo skyline.analyzer.total_analyzed %d %s | nc -w 3 %s 2003' % ((len(unique_metrics) - sum(exceptions.values())), now, host))
+            self.send_graphite_metric('skyline.analyzer.run_time', '%.2f' % (time() - now))
+            self.send_graphite_metric('skyline.analyzer.total_analyzed', '%.2f' % (len(unique_metrics) - sum(exceptions.values())))
 
             # Check canary metric
             raw_series = self.redis_conn.get(settings.FULL_NAMESPACE + settings.CANARY_METRIC)
@@ -225,10 +234,8 @@ class Analyzer(Thread):
                 projected = 24 * (time() - now) / time_human
 
                 logger.info('canary duration   :: %.2f' % time_human)
-                if settings.GRAPHITE_HOST != '':
-                    host = settings.GRAPHITE_HOST.replace('http://', '')
-                    system('echo skyline.analyzer.duration %.2f %s | nc -w 3 %s 2003' % (time_human, now, host))
-                    system('echo skyline.analyzer.projected %.2f %s | nc -w 3 %s 2003' % (projected, now, host))
+                self.send_graphite_metric('skyline.analyzer.duration', '%.2f' % time_human)
+                self.send_graphite_metric('skyline.analyzer.projected', '%.2f' % projected)
 
             # Reset counters
             self.anomalous_metrics[:] = []
