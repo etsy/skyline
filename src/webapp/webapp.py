@@ -27,8 +27,8 @@ def app_settings():
 
     app_settings = {'GRAPHITE_HOST': settings.GRAPHITE_HOST,
                     'OCULUS_HOST': settings.OCULUS_HOST,
-                    'FULL_NAMESPACE': settings.FULL_NAMESPACE
-                   }
+                    'FULL_NAMESPACE': settings.FULL_NAMESPACE,
+                    }
 
     resp = json.dumps(app_settings)
     return resp, 200
