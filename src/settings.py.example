@@ -35,7 +35,7 @@ MINI_DURATION = 3600
 GRAPHITE_HOST = 'http://your_graphite_host.com'
 
 # If you have a Graphite host set up, set its Carbon port.
-GRAPHITE_PORT = 2003
+CARBON_PORT = 2003
 
 # If you have Oculus set up, set this metric to set the clickthrough on the
 # webapp. Include http://. If you don't want to use Oculus, set this to an
