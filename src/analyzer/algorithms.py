@@ -281,11 +281,6 @@ def run_selected_algorithm(timeseries, metric_name):
     if time() - timeseries[-1][0] > STALE_PERIOD:
         raise Stale()
 
-    # Get rid of incomplete series
-    duration = timeseries[-1][0] - timeseries[0][0]
-    if duration < FULL_DURATION:
-        raise Incomplete()
-
     # Get rid of boring series
     if len(set(item[1] for item in timeseries[-MAX_TOLERABLE_BOREDOM:])) == BOREDOM_SET_SIZE:
         raise Boring()

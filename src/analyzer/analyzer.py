@@ -112,8 +112,6 @@ class Analyzer(Thread):
                 exceptions['TooShort'] += 1
             except Stale:
                 exceptions['Stale'] += 1
-            except Incomplete:
-                exceptions['Incomplete'] += 1
             except Boring:
                 exceptions['Boring'] += 1
             except:
