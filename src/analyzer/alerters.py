@@ -28,18 +28,23 @@ def alert_smtp(alert, metric):
         recipient = alert[1]
     else:
         sender = settings.SMTP_OPTS['sender']
-        recipient = settings.SMTP_OPTS['recipients'][alert[0]]
+        recipients = settings.SMTP_OPTS['recipients'][alert[0]]
 
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = '[skyline alert] ' + metric[1]
-    msg['From'] = sender
-    msg['To'] = recipient
-    link = '%s/render/?width=588&height=308&target=%s' % (settings.GRAPHITE_HOST, metric[1])
-    body = 'Anomalous value: %s <br> Next alert in: %s seconds <a href="%s"><img src="%s"/></a>' % (metric[0], alert[2], link, link)
-    msg.attach(MIMEText(body, 'html'))
-    s = SMTP('127.0.0.1')
-    s.sendmail(sender, recipient, msg.as_string())
-    s.quit()
+    # Backwards compatibility
+    if type(recipients) is str:
+        recipients = [recipients]
+
+    for recipient in recipients:
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = '[skyline alert] ' + metric[1]
+        msg['From'] = sender
+        msg['To'] = recipient
+        link = '%s/render/?width=588&height=308&target=%s' % (settings.GRAPHITE_HOST, metric[1])
+        body = 'Anomalous value: %s <br> Next alert in: %s seconds <a href="%s"><img src="%s"/></a>' % (metric[0], alert[2], link, link)
+        msg.attach(MIMEText(body, 'html'))
+        s = SMTP('127.0.0.1')
+        s.sendmail(sender, recipient, msg.as_string())
+        s.quit()
 
 
 def alert_pagerduty(alert, metric):

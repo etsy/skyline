@@ -126,9 +126,9 @@ SMTP_OPTS = {
     # This specifies the sender of email alerts.
     "sender": "skyline-alerts@etsy.com",
     # recipients is a dictionary mapping metric names
-    # (exactly matching those listed in ALERTS) to e-mail addresses
+    # (exactly matching those listed in ALERTS) to an array of e-mail addresses
     "recipients": {
-        "skyline": "abe@etsy.com",
+        "skyline": ["abe@etsy.com", "you@yourcompany.com"],
     },
 }
 
