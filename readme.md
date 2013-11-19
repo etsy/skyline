@@ -88,7 +88,8 @@ list, according to the schema `(metric keyword, strategy, expiration seconds)` w
 alerting strategies. For every anomalous metric, Skyline will search for the given
 keyword and trigger the corresponding alert(s). To prevent alert fatigue, Skyline
 will only alert once every <expiration seconds> for any given metric/strategy
-combination.
+combination. To enable Hipchat integration, uncomment the python-simple-hipchat
+line in the requirements.txt file.
 
 ### How do you actually detect anomalies?
 An ensemble of algorithms vote. Majority rules. Batteries __kind of__ included.
