@@ -5,3 +5,4 @@ flask==0.9
 simplejson==2.0.9
 unittest2
 mock
+#python-simple-hipchat
