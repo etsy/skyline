@@ -31,7 +31,7 @@ FULL_DURATION = 86400
 MINI_DURATION = 3600
 
 # If you have a Graphite host set up, set this metric to get graphs on
-# Skyline and Horizon. Include http://.
+# Skyline and Horizon. Don't include http:// since this is used for carbon host as well.
 GRAPHITE_HOST = 'your_graphite_host.com'
 
 # The Graph url used to link to Graphite (Or another graphite dashboard) 
