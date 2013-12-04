@@ -34,9 +34,9 @@ MINI_DURATION = 3600
 # Skyline and Horizon. Don't include http:// since this is used for carbon host as well.
 GRAPHITE_HOST = 'your_graphite_host.com'
 
-# The Graph url used to link to Graphite (Or another graphite dashboard) 
+# The Graph url used to link to Graphite (Or another graphite dashboard)
 # %s will be replaced by the metric name
-GRAPH_URL = 'http://' + GRAPHITE_HOST + '/render/?width=1400&from=-1hour&target=%s'  
+GRAPH_URL = 'http://' + GRAPHITE_HOST + '/render/?width=1400&from=-1hour&target=%s'
 
 # If you have a Graphite host set up, set its Carbon port.
 CARBON_PORT = 2003
