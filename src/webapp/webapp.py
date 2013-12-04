@@ -25,7 +25,7 @@ def index():
 @app.route("/app_settings")
 def app_settings():
 
-    app_settings = {'GRAPHITE_HOST': settings.GRAPHITE_HOST,
+    app_settings = {'GRAPH_URL': settings.GRAPH_URL,
                     'OCULUS_HOST': settings.OCULUS_HOST,
                     'FULL_NAMESPACE': settings.FULL_NAMESPACE,
                     }

@@ -39,7 +39,7 @@ def alert_smtp(alert, metric):
         msg['Subject'] = '[skyline alert] ' + metric[1]
         msg['From'] = sender
         msg['To'] = recipient
-        link = '%s/render/?width=588&height=308&target=%s' % (settings.GRAPHITE_HOST, metric[1])
+        link = settings.GRAPH_URL % (metric[1])
         body = 'Anomalous value: %s <br> Next alert in: %s seconds <a href="%s"><img src="%s"/></a>' % (metric[0], alert[2], link, link)
         msg.attach(MIMEText(body, 'html'))
         s = SMTP('127.0.0.1')
@@ -57,7 +57,7 @@ def alert_hipchat(alert, metric):
     import hipchat
     hipster = hipchat.HipChat(token=settings.HIPCHAT_OPTS['auth_token'])
     rooms = settings.HIPCHAT_OPTS['rooms'][alert[0]]
-    link = '%s/render/?width=588&height=308&target=%s' % (settings.GRAPHITE_HOST, metric[1])
+    link = settings.GRAPH_URL % (metric[1])
 
     for room in rooms:
         hipster.method('rooms/message', method='POST', parameters={'room_id': room, 'from': 'Skyline', 'color': settings.HIPCHAT_OPTS['color'], 'message': 'Anomaly: <a href="%s">%s</a> : %s' % (link, metric[1], metric[0])})
