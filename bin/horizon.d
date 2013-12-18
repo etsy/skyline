@@ -46,7 +46,10 @@ case "$1" in
   run)
     run
         ;;
-
+  restart)
+    stop
+    start
+       ;;
   *)
         echo $"Usage: $0 {start|stop|run}"
         exit 2
