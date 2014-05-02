@@ -43,6 +43,10 @@ case "$1" in
   stop)
     stop
         ;;
+  restart)
+    stop
+    start
+       ;;
   run)
     run
         ;;
