@@ -108,8 +108,8 @@ def first_hour_average(timeseries):
 def stddev_from_average(timeseries):
     """
     A timeseries is anomalous if the absolute value of the average of the latest
-    three datapoint minus the moving average is greater than one standard
-    deviation of the average. This does not exponentially weight the MA and so
+    three datapoint minus the moving average is greater than three standard
+    deviations of the average. This does not exponentially weight the MA and so
     is better for detecting anomalies with respect to the entire series.
     """
     series = pandas.Series([x[1] for x in timeseries])
@@ -123,8 +123,8 @@ def stddev_from_average(timeseries):
 def stddev_from_moving_average(timeseries):
     """
     A timeseries is anomalous if the absolute value of the average of the latest
-    three datapoint minus the moving average is greater than one standard
-    deviation of the moving average. This is better for finding anomalies with
+    three datapoint minus the moving average is greater than three standard
+    deviations of the moving average. This is better for finding anomalies with
     respect to the short term trends.
     """
     series = pandas.Series([x[1] for x in timeseries])
@@ -137,7 +137,7 @@ def stddev_from_moving_average(timeseries):
 def mean_subtraction_cumulation(timeseries):
     """
     A timeseries is anomalous if the value of the next datapoint in the
-    series is farther than a standard deviation out in cumulative terms
+    series is farther than three standard deviations out in cumulative terms
     after subtracting the mean from each data point.
     """
 
