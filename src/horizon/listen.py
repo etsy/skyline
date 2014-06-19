@@ -11,6 +11,12 @@ import settings
 logger = logging.getLogger("HorizonLog")
 
 ##SafeUnpickler taken from Carbon: https://github.com/graphite-project/carbon/blob/master/lib/carbon/util.py
+import sys
+try:
+  from cStringIO import StringIO
+except ImportError:
+  from StringIO import StringIO
+
 try:
   import cPickle as pickle
   USING_CPICKLE = True
