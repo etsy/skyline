@@ -1,3 +1,8 @@
+## Skyline is an Archived Project
+
+Skyline is no longer actively maintained. Your mileage with patches may vary.
+
+
 ## Skyline
 
 [![Build Status](https://travis-ci.org/etsy/skyline.svg)](https://travis-ci.org/etsy/skyline)
